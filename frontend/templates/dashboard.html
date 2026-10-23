@@ -1,1 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel — ONG Solidária</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body data-page="dashboard">
+  <header>
+    <span class="logo">ONG Solidária</span>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/dashboard.html">Painel</a>
+      <a href="/login.html" id="navLogin">Entrar</a>
+      <a href="/cadastro.html" id="navCadastro">Cadastrar</a>
+      <a href="#" id="navSair" style="display:none">Sair</a>
+      <span class="badge" id="demoBadge" title="API indisponível: dados salvos só neste navegador">modo demo</span>
+    </nav>
+  </header>
+  <main>
+    <h2 id="ola">Painel</h2>
+    <section class="stats" id="stats"></section>
+
+    <section class="card" style="margin-top:1.25rem">
+      <h2>Fazer uma doação</h2>
+      <form id="formDoar">
+        <select name="projeto_id" id="selProjeto" required></select>
+        <input type="number" name="valor" min="1" step="0.01" placeholder="Valor (R$)" required>
+        <button type="submit">Doar</button>
+        <p class="msg" id="msgDoar"></p>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Novo projeto</h2>
+      <form id="formProjeto">
+        <input type="text" name="titulo" placeholder="Título" required>
+        <textarea name="descricao" placeholder="Descrição"></textarea>
+        <input type="number" name="meta" min="0" step="0.01" placeholder="Meta (R$)">
+        <button type="submit">Criar projeto</button>
+        <p class="msg" id="msgProjeto"></p>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Minhas doações</h2>
+      <ul class="lista" id="listaDoacoes"></ul>
+    </section>
+  </main>
+  <footer>Trabalho Web III</footer>
+  <script src="/static/js/script.js"></script>
+</body>
+</html>
 
