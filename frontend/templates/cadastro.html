@@ -1,1 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cadastro — ONG Solidária</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body data-page="cadastro">
+  <header>
+    <span class="logo">ONG Solidária</span>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/dashboard.html">Painel</a>
+      <a href="/login.html" id="navLogin">Entrar</a>
+      <a href="/cadastro.html" id="navCadastro">Cadastrar</a>
+      <a href="#" id="navSair" style="display:none">Sair</a>
+      <span class="badge" id="demoBadge" title="API indisponível: dados salvos só neste navegador">modo demo</span>
+    </nav>
+  </header>
+  <main>
+    <section class="card auth">
+      <h2>Criar conta</h2>
+      <form id="formCadastro">
+        <input type="text" name="nome" placeholder="Nome completo" required>
+        <input type="email" name="email" placeholder="E-mail" required>
+        <input type="password" name="senha" placeholder="Senha (mín. 6 caracteres)" minlength="6" required>
+        <button type="submit">Cadastrar</button>
+        <p class="msg" id="msg"></p>
+      </form>
+      <p class="mut">Já tem conta? <a href="/login.html">Entrar</a></p>
+    </section>
+  </main>
+  <footer>Trabalho Web III</footer>
+  <script src="/static/js/script.js"></script>
+</body>
+</html>
 
