@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:16
+    image: docker.io/library/postgres:16
     environment:
       POSTGRES_USER: estoque
       POSTGRES_PASSWORD: estoque_dev
@@ -9,6 +9,6 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro,Z
 volumes:
   pgdata:
