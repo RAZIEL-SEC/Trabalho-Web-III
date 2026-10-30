@@ -1,9 +1,13 @@
 from fastapi import Depends, FastAPI
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+
 from app.core.deps import get_db
+from app.routers import auth
 
 app = FastAPI(title="Estoque - Amigos do Zé Alguém")
+app.include_router(auth.router)
+
 
 @app.get("/saude")
 def saude(db: Session = Depends(get_db)):
