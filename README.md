@@ -8,9 +8,9 @@ python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 python -m pip install -r backend/requirements.txt
 
-# Linux: cp .env.example backend/.env       
+// Linux: cp .env.example backend/.env       
 
-# Windows: copy .env.example backend\.env
+// Windows: copy .env.example backend\.env
 
 docker compose up -d
 cd backend
