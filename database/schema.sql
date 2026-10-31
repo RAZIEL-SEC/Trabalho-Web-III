@@ -6,7 +6,12 @@ CREATE TABLE usuarios (
     nome        VARCHAR(100) NOT NULL,
     email       VARCHAR(150) NOT NULL UNIQUE,
     senha_hash  TEXT NOT NULL,
+    perfil      VARCHAR(10) NOT NULL DEFAULT 'operador'
+                CHECK (perfil IN ('admin', 'operador')),
     ativo       BOOLEAN NOT NULL DEFAULT TRUE,
+    -- sobe a cada troca de senha, desativação ou "sair de todos os dispositivos":
+    -- cookies emitidos com uma versão antiga deixam de valer
+    token_versao INTEGER NOT NULL DEFAULT 0,
     criado_em   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -53,3 +58,27 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER trg_movimentacoes_imutavel
     BEFORE UPDATE OR DELETE ON movimentacoes
     FOR EACH ROW EXECUTE FUNCTION bloquear_alteracao();
+
+-- registro de ações de segurança e administração (logins, usuários, senhas)
+CREATE TABLE auditoria (
+    id          BIGSERIAL PRIMARY KEY,
+    usuario_id  INTEGER REFERENCES usuarios(id),  -- NULL: e-mail desconhecido no login
+    acao        VARCHAR(40) NOT NULL,
+    detalhe     TEXT,
+    ip          VARCHAR(45),
+    criado_em   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_auditoria_data    ON auditoria (criado_em DESC);
+CREATE INDEX idx_auditoria_usuario ON auditoria (usuario_id, criado_em DESC);
+
+-- o log não pode ser alterado nem apagado
+CREATE FUNCTION auditoria_imutavel() RETURNS trigger AS $$
+BEGIN
+    RAISE EXCEPTION 'auditoria é imutável';
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_auditoria_imutavel
+    BEFORE UPDATE OR DELETE ON auditoria
+    FOR EACH ROW EXECUTE FUNCTION auditoria_imutavel();

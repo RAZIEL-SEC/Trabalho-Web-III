@@ -34,7 +34,10 @@ def test_login_real_permite_acesso_por_cookie(
 
     assert response.status_code == 200
     assert response.json() == {
-        "id": usuario.id, "nome": usuario.nome, "email": usuario.email
+        "id": usuario.id,
+        "nome": usuario.nome,
+        "email": usuario.email,
+        "perfil": "operador",
     }
     assert client.cookies.get(COOKIE_NOME)
     cookie = next(cookie for cookie in client.cookies.jar if cookie.name == COOKIE_NOME)

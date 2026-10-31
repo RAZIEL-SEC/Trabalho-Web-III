@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Usuários - Estoque</title>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="itens.html">Itens</a>
+      <a href="movimentacoes.html">Movimentações</a>
+      <a href="historico.html">Histórico</a>
+      <a href="usuarios.html" data-so-admin hidden>Usuários</a>
+      <button type="button" data-sair>Sair</button>
+      <button type="button" data-sair-todos>Sair de todos os dispositivos</button>
+    </nav>
+  </header>
+  <main>
+    <h1>Usuários</h1>
+
+    <section>
+      <h2>Novo usuário</h2>
+      <form id="form-usuario">
+        <label>Nome
+          <input type="text" name="nome" required minlength="2" maxlength="100">
+        </label>
+        <label>E-mail
+          <input type="email" name="email" required maxlength="150" autocomplete="off">
+        </label>
+        <label>Senha inicial (mínimo 10 caracteres)
+          <input type="password" name="senha" required minlength="10" maxlength="200" autocomplete="new-password">
+        </label>
+        <label>Perfil
+          <select name="perfil">
+            <option value="operador">Operador</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </label>
+        <button type="submit">Cadastrar</button>
+        <p id="msg" role="status"></p>
+      </form>
+    </section>
+
+    <section>
+      <h2>Usuários cadastrados</h2>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Situação</th><th></th></tr>
+          </thead>
+          <tbody id="tabela"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="static/auth.js"></script>
+  <script src="static/usuarios.js"></script>
+</body>
+</html>
