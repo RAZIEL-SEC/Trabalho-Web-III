@@ -1,7 +1,10 @@
 """Cria um usuário da ONG direto no banco (não existe cadastro público).
 
 Uso, da raiz do projeto, com o venv ativo e o banco no ar:
-    python scripts/criar_usuario.py --nome "Raíssa Barreto" --email raissa@exemplo.org
+    python scripts/criar_usuario.py --nome "Raíssa Barreto" --email raissa@exemplo.org --admin
+
+O primeiro administrador sempre sai daqui. Os demais usuários são cadastrados
+por um administrador, na tela de usuários do sistema.
 """
 import argparse
 import getpass
@@ -24,6 +27,7 @@ def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--nome", required=True)
     p.add_argument("--email", required=True)
+    p.add_argument("--admin", action="store_true", help="cria como administrador")
     args = p.parse_args()
 
     email = args.email.strip().lower()
@@ -36,10 +40,15 @@ def main() -> None:
     with SessionLocal() as db:
         if db.scalar(select(Usuario).where(Usuario.email == email)):
             sys.exit("Já existe um usuário com esse e-mail.")
-        usuario = Usuario(nome=args.nome.strip(), email=email, senha_hash=gerar_hash(senha))
+        usuario = Usuario(
+            nome=args.nome.strip(),
+            email=email,
+            senha_hash=gerar_hash(senha),
+            perfil="admin" if args.admin else "operador",
+        )
         db.add(usuario)
         db.commit()
-        print(f"Usuário criado: id={usuario.id}, email={usuario.email}")
+        print(f"Usuário criado: id={usuario.id}, email={usuario.email}, perfil={usuario.perfil}")
 
 
 if __name__ == "__main__":

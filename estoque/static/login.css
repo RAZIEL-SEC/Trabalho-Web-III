@@ -1,0 +1,197 @@
+/* Tela de login. Arquivo próprio para não depender do style.css geral. */
+:root {
+  --fundo: #f5f2ec;
+  --cartao: #ffffff;
+  --texto: #1f2328;
+  --texto-suave: #5b6470;
+  --borda: #cfd5dc;
+  --destaque: #b4412f;
+  --destaque-hover: #9a3526;
+  --destaque-texto: #ffffff;
+  --foco: #1d4ed8;
+  --erro-fundo: #fdecea;
+  --erro-borda: #e4a39b;
+  --erro-texto: #8a1f11;
+  --aviso-fundo: #eef4ff;
+  --aviso-borda: #b3c8f5;
+  --aviso-texto: #1b3f8f;
+  --sombra: 0 1px 2px rgb(0 0 0 / 6%), 0 12px 32px rgb(0 0 0 / 8%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #14161a;
+    --cartao: #1d2025;
+    --texto: #eceff3;
+    --texto-suave: #a3acb8;
+    --borda: #3a404a;
+    --destaque: #e0735f;
+    --destaque-hover: #ea8a78;
+    --destaque-texto: #1a0d0a;
+    --foco: #8ab4ff;
+    --erro-fundo: #3a1c18;
+    --erro-borda: #7a3a31;
+    --erro-texto: #ffc4ba;
+    --aviso-fundo: #1a2740;
+    --aviso-borda: #31508a;
+    --aviso-texto: #bcd2ff;
+    --sombra: 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px rgb(0 0 0 / 40%);
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: var(--fundo);
+  color: var(--texto);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.cartao {
+  width: 100%;
+  max-width: 24rem;
+  padding: 2rem 1.75rem 1.5rem;
+  background: var(--cartao);
+  border: 1px solid var(--borda);
+  border-radius: 1rem;
+  box-shadow: var(--sombra);
+}
+
+.marca {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: var(--destaque);
+  color: var(--destaque-texto);
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.subtitulo {
+  margin: 0.25rem 0 1.5rem;
+  text-align: center;
+  color: var(--texto-suave);
+  font-size: 0.95rem;
+}
+
+.campo { margin-bottom: 1rem; }
+
+label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+input {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  font: inherit;
+  color: var(--texto);
+  background: transparent;
+  border: 1px solid var(--borda);
+  border-radius: 0.6rem;
+}
+
+input:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 2px;
+}
+
+input[aria-invalid="true"] { border-color: var(--erro-texto); }
+
+.senha { position: relative; }
+.senha input { padding-right: 5.25rem; }
+
+.ver-senha {
+  position: absolute;
+  top: 50%;
+  right: 0.4rem;
+  transform: translateY(-50%);
+  padding: 0.35rem 0.6rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  background: transparent;
+  border: 0;
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+.ver-senha:hover { color: var(--texto); }
+
+.dica {
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.erro,
+.aviso {
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.92rem;
+  border-radius: 0.6rem;
+  border: 1px solid;
+}
+.erro  { background: var(--erro-fundo);  border-color: var(--erro-borda);  color: var(--erro-texto); }
+.aviso { background: var(--aviso-fundo); border-color: var(--aviso-borda); color: var(--aviso-texto); }
+[hidden] { display: none !important; }
+
+.principal {
+  position: relative;
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.7rem 1rem;
+  font: inherit;
+  font-weight: 700;
+  color: var(--destaque-texto);
+  background: var(--destaque);
+  border: 0;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.principal:hover { background: var(--destaque-hover); }
+.principal:disabled { cursor: progress; opacity: 0.85; }
+
+.principal.carregando .rotulo { visibility: hidden; }
+.principal.carregando::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 3px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: girar 0.7s linear infinite;
+}
+@keyframes girar { to { transform: rotate(360deg); } }
+
+.rodape {
+  margin: 1.25rem 0 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .principal { transition: none; }
+  .principal.carregando::after { animation-duration: 2s; }
+}
