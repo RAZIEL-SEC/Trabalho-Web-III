@@ -1,10 +1,10 @@
-# Contrato da API: cadastro e listagem de itens
+# Contrato da API: itens e movimentações de estoque
 
 ## Autenticação por cookie
 
-`GET /itens` e `POST /itens` exigem um usuário ativo, autenticado pela
-dependência existente `get_usuario_atual`. A autenticação atual permanece em
-uso; a decisão sobre Auth0 aguarda alinhamento com João.
+`GET /itens`, `POST /itens` e `POST /movimentacoes` exigem um usuário ativo,
+autenticado pela dependência existente `get_usuario_atual`. A autenticação
+atual permanece em uso; a decisão sobre Auth0 aguarda alinhamento com João.
 
 Faça login com o usuário previamente cadastrado:
 
@@ -42,7 +42,7 @@ const resposta = await fetch("/itens?limite=20&offset=0", {
 });
 ```
 
-Sem cookie válido ou com usuário inativo, as duas rotas retornam `401`:
+Sem cookie válido ou com usuário inativo, essas rotas retornam `401`:
 
 ```json
 {"detail": "Não autenticado"}
@@ -160,11 +160,115 @@ Parâmetros fora dos limites ou que não representam inteiros retornam `422`.
 ## Saldo Decimal no JSON
 
 `saldo` é um `Decimal` no backend, armazenado como `NUMERIC(10,2)` no
-PostgreSQL. Nas respostas das duas rotas, ele é serializado como **string**,
+PostgreSQL. Nas respostas de itens, ele é serializado como **string**,
 por exemplo `"0.00"`, e não como número JSON. O frontend deve tipar o campo
 como `string` e preservar a representação decimal; conversões para ponto
 flutuante podem perder precisão. O cadastro não aceita saldo enviado pelo
 cliente.
+
+## Registrar entrada ou saída
+
+```http
+POST /movimentacoes
+Content-Type: application/json
+Cookie: access_token=<cookie-recebido-no-login>
+
+{
+  "item_id": 12,
+  "tipo": "entrada",
+  "quantidade": "10.50",
+  "observacao": "Doação recebida"
+}
+```
+
+| Campo | Tipo | Regras |
+| --- | --- | --- |
+| `item_id` | inteiro JSON | Obrigatório, de `1` a `2147483647`; deve referenciar um item ativo. Strings, booleanos e números fracionários são recusados. |
+| `tipo` | string | Obrigatório: somente `entrada` ou `saida`, exatamente nessa grafia. |
+| `quantidade` | string decimal ou número JSON | Obrigatória, positiva, até `99999999.99`, com no máximo duas casas decimais após desconsiderar zeros finais. Recomenda-se enviar string para preservar a precisão. |
+| `observacao` | string ou `null` | Opcional, padrão `null`; até 1000 caracteres após remover espaços das extremidades. |
+
+Casas decimais adicionais contendo apenas zeros são aceitas: `"2.3500"`
+equivale a `"2.35"`. Quantidade zero, negativa, não numérica, infinita,
+`NaN` ou com precisão maior que a suportada retorna `422`.
+
+O corpo recusa campos extras, inclusive `usuario_id`, `saldo`, `saldo_atual`,
+`id`, `criado_em`, `estorno_de` e `motivo`. O autor é sempre obtido do cookie
+do usuário autenticado. A unidade é a do item cadastrado e não é enviada no
+corpo. `estorno` não é aceito por esta rota nesta entrega.
+
+Resposta `201 Created`, partindo de um item com saldo zero:
+
+```json
+{
+  "id": 31,
+  "item_id": 12,
+  "tipo": "entrada",
+  "quantidade": "10.50",
+  "observacao": "Doação recebida",
+  "usuario_id": 7,
+  "criado_em": "2026-10-31T18:00:00Z",
+  "saldo_atual": "10.50"
+}
+```
+
+Para registrar uma saída desse item:
+
+```javascript
+const resposta = await fetch("/movimentacoes", {
+  method: "POST",
+  credentials: "include",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    item_id: 12,
+    tipo: "saida",
+    quantidade: "2.25",
+    observacao: "Entrega de alimentos",
+  }),
+});
+const dados = await resposta.json();
+```
+
+Em caso de sucesso, essa saída retorna `201`, `tipo: "saida"`,
+`quantidade: "2.25"` e `saldo_atual: "8.25"`. `quantidade` e `saldo_atual`
+sempre são **strings decimais com duas casas**, inclusive quando a quantidade
+foi enviada como número. Quantidade de saída continua positiva no histórico;
+o campo `tipo` determina a subtração.
+
+`saldo_atual` representa o saldo após essa movimentação. Outra movimentação
+pode alterá-lo antes de o frontend receber a resposta; `GET /itens` fornece
+o saldo atualizado para uma nova consulta. Não há paginação neste `POST`.
+
+### Consistência do saldo
+
+O backend bloqueia a linha do item com `SELECT ... FOR UPDATE`, confere o
+saldo sob esse bloqueio e grava a atualização e o histórico na mesma
+transação. Operações concorrentes do mesmo item aguardam a liberação da
+linha e recalculam o saldo antes de prosseguir. Uma saída pode consumir todo
+o saldo, mas não pode torná-lo negativo. Uma entrada não pode exceder
+`99999999.99`, limite do `NUMERIC(10,2)` existente.
+
+O backend executa rollback nas rejeições e falhas detectadas; saldo e histórico
+pertencem à mesma transação. A implementação
+segue o bloqueio de linhas descrito na
+[documentação do PostgreSQL 16](https://www.postgresql.org/docs/16/explicit-locking.html#LOCKING-ROWS).
+Não foi necessário alterar o schema do banco.
+
+### Erros da movimentação
+
+| Status | Condição | Corpo |
+| --- | --- | --- |
+| `401` | Ausência de autenticação válida ou usuário inativo. | `{"detail": "Não autenticado"}` |
+| `404` | Item não existe. | `{"detail": "Item não encontrado."}` |
+| `409` | Item inativo. | `{"detail": "Item inativo."}` |
+| `409` | Saída maior que o saldo disponível. | `{"detail": "Saldo insuficiente para a saída."}` |
+| `409` | Entrada faria o saldo ultrapassar o limite. | `{"detail": "Saldo máximo do item excedido."}` |
+| `422` | Campos obrigatórios ausentes, extras, tipo ou quantidade inválidos. | `{"detail": [...]}`, no formato de validação já mostrado para itens. |
+
+Requisições rejeitadas não alteram o saldo nem acrescentam histórico.
+Falhas inesperadas do banco retornam erro de servidor, sem confirmar uma
+movimentação parcial. Cada `POST` bem-sucedido cria uma nova movimentação;
+esta entrega não oferece chave de idempotência para reenvios.
 
 ## Códigos de resposta
 
@@ -173,6 +277,7 @@ cliente.
 | `POST /auth/login` | `200` | `401` credenciais/usuário; `422` validação; `429` limite de tentativas. |
 | `POST /itens` | `201` | `401` autenticação; `409` par nome/unidade duplicado; `422` validação. |
 | `GET /itens` | `200` | `401` autenticação; `422` paginação inválida. |
+| `POST /movimentacoes` | `201` | `401` autenticação; `404` item; `409` conflito de estoque; `422` validação. |
 
 ## Verificação
 
@@ -180,3 +285,7 @@ Os testes de integração em `backend/tests/test_itens.py` usam PostgreSQL
 real, login por `/auth/login` e o cookie recebido. Apenas a conexão de banco
 é direcionada para um schema isolado; a autenticação não é substituída.
 Comandos, resultados e limites da verificação estão em [testes.md](testes.md).
+
+Os testes em `test_movimentacoes.py` e `test_movimentacoes_concorrencia.py`
+também verificam entrada, saída, rollback e requisições concorrentes contra
+o PostgreSQL, usando o mesmo login real e autenticação por cookie.
