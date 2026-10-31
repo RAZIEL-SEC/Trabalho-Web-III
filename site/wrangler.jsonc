@@ -2,6 +2,6 @@
   "name": "trabalho-web-iii",
   "compatibility_date": "2026-10-01",
   "assets": {
-    "directory": "./frontend"
+    "directory": "."
   }
 }
