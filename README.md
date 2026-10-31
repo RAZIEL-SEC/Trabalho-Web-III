@@ -5,7 +5,7 @@ git clone https://github.com/RAZIEL-SEC/Trabalho-Web-III.git
 cd Trabalho-Web-III
 
 python3 -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+source .venv/bin/activate          // Windows: .venv\Scripts\activate
 python -m pip install -r backend/requirements.txt
 
 // Linux: cp .env.example backend/.env       
