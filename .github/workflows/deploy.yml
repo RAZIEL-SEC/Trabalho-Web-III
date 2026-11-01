@@ -1,0 +1,33 @@
+
+name: Deploy para Oracle VPS
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Atualizar aplicação na VPS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            set -e
+            cd /home/ubuntu/Trabalho-Web-III
+            git fetch origin main
+            git reset --hard origin/main
+            docker compose up -d --build app
+            docker image prune -f
+            curl --fail --silent --show-error http://127.0.0.1:8000/saude
