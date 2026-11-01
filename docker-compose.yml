@@ -1,14 +1,35 @@
 services:
   db:
-    image: docker.io/library/postgres:16
+    image: postgres:16
+    restart: unless-stopped
     environment:
       POSTGRES_USER: estoque
-      POSTGRES_PASSWORD: estoque_dev
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD ausente}
       POSTGRES_DB: estoque
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro,Z
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U estoque -d estoque"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg://estoque:${DB_PASSWORD}@db:5432/estoque
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY ausente}
+      ACCESS_TOKEN_MINUTES: "15"
+      COOKIE_SECURE: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8000:8000"
+
 volumes:
   pgdata:
