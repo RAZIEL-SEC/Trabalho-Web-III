@@ -17,3 +17,5 @@ cd backend
 uvicorn app.main:app --reload
 
 https://trabalho-web-iii.razielsec01.workers.dev/templates/cadastro
+
+https://amigosdozealguem.duckdns.org/
