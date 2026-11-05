@@ -1,0 +1,11 @@
+{
+  "title": "Amigos do Zé Alguém",
+  "description": "This web application streamlines document management by allowing users to follow specified parameters and access essential information efficiently.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
