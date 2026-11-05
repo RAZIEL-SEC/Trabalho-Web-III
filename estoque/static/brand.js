@@ -1,2 +1,2 @@
-// Injeta o SVG inline para herdar as variáveis de cor do tema atual.
-(async()=>{try{const response=await fetch("static/logo.svg");if(!response.ok)throw new Error("Logo indisponível");const markup=await response.text();document.querySelectorAll("[data-logo]").forEach(slot=>{slot.innerHTML=markup;const svg=slot.querySelector("svg");if(svg){svg.setAttribute("focusable","false");svg.setAttribute("aria-hidden","true")}})}catch(error){console.error(error)}})();
+// Usa a arte original da ONG, sem redesenho ou vetorização.
+document.querySelectorAll("[data-logo]").forEach(slot=>{const img=document.createElement("img");img.src="static/logo.svg";img.alt="Amigos do Zé Alguém";img.className="brand-image";img.decoding="async";slot.replaceChildren(img)});
