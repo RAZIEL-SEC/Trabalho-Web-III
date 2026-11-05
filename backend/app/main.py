@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from fastapi import Depends, FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -19,6 +20,21 @@ app.include_router(movimentacoes.router)
 def saude(db: Session = Depends(get_db)):
     db.execute(text("SELECT 1"))
     return {"status": "ok"}
+
+
+@app.get("/", include_in_schema=False)
+def inicio():
+    return RedirectResponse("/estoque/", status_code=307)
+
+
+@app.get("/login", include_in_schema=False)
+def tela_login():
+    return RedirectResponse("/estoque/login.html", status_code=307)
+
+
+@app.get("/usuario", include_in_schema=False)
+def tela_usuarios():
+    return RedirectResponse("/estoque/usuarios.html", status_code=307)
 
 
 # telas do sistema, servidas na mesma origem da API (o cookie de sessão depende disso)

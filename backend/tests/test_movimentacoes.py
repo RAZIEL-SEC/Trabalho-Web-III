@@ -309,3 +309,47 @@ def test_falha_no_historico_reverte_tambem_o_saldo(
         client_autenticado, item_id, tipo, "2.00"
     ).status_code == 201
     verificar_estado(db, item_id, saldo_final, 2)
+
+
+def test_listar_historico_exige_autenticacao(client: TestClient):
+    response = client.get("/movimentacoes")
+    assert response.status_code == 401
+
+
+def test_listar_historico_retorna_movimentacoes_com_nome_do_item(
+    client_autenticado: TestClient, item_id: int
+):
+    entrada = movimentar(client_autenticado, item_id, "entrada", "5.00")
+    saida = movimentar(client_autenticado, item_id, "saida", "2.00")
+    assert entrada.status_code == 201
+    assert saida.status_code == 201
+
+    response = client_autenticado.get("/movimentacoes?limite=10")
+
+    assert response.status_code == 200
+    dados = response.json()
+    assert len(dados) == 2
+    assert dados[0]["id"] == saida.json()["id"]
+    assert dados[0]["item_nome"] == "Arroz"
+    assert dados[0]["tipo"] == "saida"
+    assert dados[1]["id"] == entrada.json()["id"]
+    assert dados[1]["item_nome"] == "Arroz"
+    assert dados[1]["tipo"] == "entrada"
+    assert all("usuario_id" in mov and "criado_em" in mov for mov in dados)
+
+
+def test_listar_historico_respeita_limite_e_offset(
+    client_autenticado: TestClient, item_id: int
+):
+    for _ in range(3):
+        assert movimentar(
+            client_autenticado, item_id, "entrada", "1.00"
+        ).status_code == 201
+
+    primeira = client_autenticado.get("/movimentacoes?limite=2&offset=0")
+    segunda = client_autenticado.get("/movimentacoes?limite=2&offset=2")
+
+    assert primeira.status_code == segunda.status_code == 200
+    assert len(primeira.json()) == 2
+    assert len(segunda.json()) == 1
+    assert primeira.json()[0]["id"] != segunda.json()[0]["id"]
