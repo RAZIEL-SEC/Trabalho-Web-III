@@ -16,7 +16,6 @@ docker compose up -d
 cd backend
 uvicorn app.main:app --reload
 
-https://trabalho-web-iii.razielsec01.workers.dev/templates/cadastro
 
 https://trabalho-web-iii.razielsec01.workers.dev
 
