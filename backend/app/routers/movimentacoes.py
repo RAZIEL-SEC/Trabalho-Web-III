@@ -2,12 +2,15 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, ConfigDict, Field
+from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.core.deps import get_db, get_usuario_atual
+from app.models.item import Item
+from app.models.movimentacao import Movimentacao
 from app.models.usuario import Usuario
 from app.services.estoque import (
     ConflitoEstoque,
@@ -81,3 +84,47 @@ def cadastrar_movimentacao(
         raise
 
     return resposta
+
+
+class MovimentacaoHistoricoOut(BaseModel):
+    id: int
+    item_id: int
+    item_nome: str
+    tipo: str
+    quantidade: Decimal
+    observacao: str | None
+    usuario_id: int
+    criado_em: datetime
+    estorno_de: int | None
+    motivo: str | None
+
+
+@router.get("", response_model=list[MovimentacaoHistoricoOut])
+def listar_movimentacoes(
+    limite: int = Query(default=100, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+    db: Session = Depends(get_db),
+    _usuario: Usuario = Depends(get_usuario_atual),
+):
+    consulta = (
+        select(Movimentacao, Item.nome)
+        .join(Item, Item.id == Movimentacao.item_id)
+        .order_by(Movimentacao.criado_em.desc(), Movimentacao.id.desc())
+        .offset(offset)
+        .limit(limite)
+    )
+    return [
+        MovimentacaoHistoricoOut(
+            id=mov.id,
+            item_id=mov.item_id,
+            item_nome=nome,
+            tipo=mov.tipo,
+            quantidade=mov.quantidade,
+            observacao=mov.observacao,
+            usuario_id=mov.usuario_id,
+            criado_em=mov.criado_em,
+            estorno_de=mov.estorno_de,
+            motivo=mov.motivo,
+        )
+        for mov, nome in db.execute(consulta).all()
+    ]
