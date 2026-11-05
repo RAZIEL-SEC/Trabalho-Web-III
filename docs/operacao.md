@@ -25,14 +25,14 @@ Settings > Builds**, os valores ativos são:
 | Build command | Vazio: HTML, CSS, JavaScript e imagens já são arquivos estáticos. |
 | Deploy command | `npx wrangler deploy --config wrangler.jsonc` |
 | Production branch | `main` |
-| Preview/non-production command, se habilitado | `npx wrangler versions upload --config wrangler.jsonc` |
+| Preview/non-production command, se habilitado | `npx wrangler preview --config wrangler.jsonc` |
 
-`versions upload` cria uma versão para verificação sem promover a branch de
-desenvolvimento à produção. O PR deve continuar aberto para revisão e merge
-pelo João. Os comandos de produção dependem das permissões e autenticação
-do projeto na Cloudflare.
+`wrangler preview` cria/atualiza um preview isolado para a branch ou PR, sem
+promover essa versão à produção. O PR deve continuar aberto para revisão e
+merge. Os comandos de produção dependem das permissões e autenticação do
+projeto na Cloudflare.
 
-As configurações de preview também foram propagadas aos ambientes de preview já existentes, para que cada branch use a raiz `site/` e o comando `npx wrangler versions upload --config wrangler.jsonc`.
+As configurações de preview também foram propagadas aos ambientes de preview já existentes, para que cada branch use a raiz `site/` e o comando `npx wrangler preview --config wrangler.jsonc`.
 
 O problema de sincronização era que o Worker estava configurado para observar
 a branch `front-end`, enquanto a aplicação e o deploy da VPS usam `main`.
@@ -104,14 +104,10 @@ instalado em cache, com a opção `--outdir` apontando para o cache na raiz.
 Nenhum desses comandos realizou deploy. Node e Wrangler foram usados de forma
 portátil no cache ignorado, sem adicionar dependências ao repositório.
 
-O comando de preview documentado também foi validado a partir de `site/`,
-pelo mesmo binário em cache, com código de saída `0`:
-
-```powershell
-npx --yes wrangler@4.148.0 versions upload --config wrangler.jsonc --dry-run
-```
-
-Foi usado um `--outdir` no cache da raiz; nenhuma versão foi enviada nesse teste.
+O comando `versions upload` também passou em dry-run local, mas não é o comando
+de preview usado pelo Workers Builds. Para PRs e branches, a configuração ativa
+usa `npx wrangler preview --config wrangler.jsonc`, conforme a documentação do
+Cloudflare Workers Builds.
 
 Também foi iniciado temporariamente `wrangler dev --local`, em
 `127.0.0.1:18787`, com a configuração de `site/`. Um script Python via entrada
@@ -137,7 +133,7 @@ A configuração da Cloudflare mostrava a branch de produção `front-end`, não
 - branch de produção: `main`;
 - raiz: `site`;
 - deploy: `npx wrangler deploy --config wrangler.jsonc`;
-- preview: `npx wrangler versions upload --config wrangler.jsonc`.
+- preview: `npx wrangler preview --config wrangler.jsonc`.
 
 A execução mais recente do deploy da VPS falhou depois de iniciar os containers,
 não durante o SSH nem durante o build Docker. O comando de health check foi
