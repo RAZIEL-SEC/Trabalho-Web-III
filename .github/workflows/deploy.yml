@@ -70,7 +70,7 @@ jobs:
           command_timeout: 10m
           script: |
             set -Eeuo pipefail
-            cd /home/ubuntu/Trabalho-Web-III
+            cd "$HOME/Trabalho-Web-III"
 
             git fetch --prune origin main
             git reset --hard origin/main
