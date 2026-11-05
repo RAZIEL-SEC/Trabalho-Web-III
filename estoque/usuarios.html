@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Usuários - Estoque</title>
+  <link rel="icon" type="image/svg+xml" href="static/logo.svg"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <link rel="stylesheet" href="static/usuarios.css">
 </head>
 <body>
@@ -13,7 +14,8 @@
       <a href="movimentacoes.html">Movimentações</a>
       <a href="historico.html">Histórico</a>
       <a href="usuarios.html" data-so-admin hidden>Usuários</a>
-      <button type="button" data-sair>Sair</button>
+      <label class="theme-control">Tema<select data-theme-select aria-label="Tema da interface"><option value="light">Claro</option><option value="dark">Escuro</option><option value="system">Automático</option></select></label>
+      <button type="button" data-sair><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sair</button>
       <button type="button" data-sair-todos>Sair de todos os dispositivos</button>
     </nav>
   </header>
@@ -55,6 +57,7 @@
       </div>
     </section>
   </main>
+  <script src="static/theme.js"></script>
   <script src="static/auth.js"></script>
   <script src="static/usuarios.js"></script>
 </body>
