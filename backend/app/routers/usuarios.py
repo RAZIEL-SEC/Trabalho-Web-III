@@ -3,7 +3,7 @@ from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-from sqlalchemy import select
+from sqlalchemy import func, select, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -102,7 +102,24 @@ def atualizar(
     db: Session = Depends(get_db),
     admin: Usuario = Depends(get_admin_atual),
 ):
-    alvo = db.get(Usuario, usuario_id)
+    # Compartilha o mesmo lock da exclusão: PATCH e DELETE não podem
+    # validar simultaneamente estados antigos da lista de administradores.
+    db.execute(text("LOCK TABLE usuarios IN SHARE ROW EXCLUSIVE MODE"))
+    admin_atual = db.scalar(
+        select(Usuario)
+        .where(Usuario.id == admin.id)
+        .execution_options(populate_existing=True)
+        .with_for_update()
+    )
+    if admin_atual is None or not admin_atual.ativo or admin_atual.perfil != "admin":
+        raise HTTPException(401, "Sessão administrativa inválida")
+
+    alvo = db.scalar(
+        select(Usuario)
+        .where(Usuario.id == usuario_id)
+        .execution_options(populate_existing=True)
+        .with_for_update()
+    )
     if alvo is None:
         raise HTTPException(404, "Usuário não encontrado")
 
@@ -112,6 +129,29 @@ def atualizar(
     ):
         raise HTTPException(400, "Você não pode desativar nem rebaixar a própria conta")
 
+    removendo_admin_ativo = (
+        alvo.ativo
+        and alvo.perfil == "admin"
+        and (
+            dados.ativo is False
+            or (dados.perfil is not None and dados.perfil != "admin")
+        )
+    )
+    if removendo_admin_ativo:
+        outros_admins_ativos = db.scalar(
+            select(func.count())
+            .select_from(Usuario)
+            .where(
+                Usuario.ativo.is_(True),
+                Usuario.perfil == "admin",
+                Usuario.id != alvo.id,
+            )
+        )
+        if outros_admins_ativos == 0:
+            raise HTTPException(
+                400, "Não é possível desativar nem rebaixar o último administrador ativo"
+            )
+
     mudancas = []
     if dados.ativo is not None and dados.ativo != alvo.ativo:
         alvo.ativo = dados.ativo
@@ -119,8 +159,8 @@ def atualizar(
         if not dados.ativo:
             invalidar_sessoes(alvo)  # reativar depois não ressuscita cookies antigos
     if dados.perfil is not None and dados.perfil != alvo.perfil:
-        alvo.perfil = dados.perfil
         mudancas.append(f"perfil={dados.perfil}")
+        alvo.perfil = dados.perfil
 
     if mudancas:
         registrar(
@@ -129,6 +169,61 @@ def atualizar(
         )
         db.commit()
     return alvo
+
+
+@router.delete("/{usuario_id}", status_code=204)
+def excluir(
+    usuario_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    admin: Usuario = Depends(get_admin_atual),
+):
+    if usuario_id == admin.id:
+        raise HTTPException(400, "Você não pode excluir sua própria conta")
+
+    # Serializa alterações de usuários durante a checagem do último administrador.
+    # O lock conflita com INSERT/UPDATE/DELETE em usuarios, evitando duas exclusões
+    # simultâneas que, isoladamente, poderiam remover os dois últimos admins.
+    db.execute(text("LOCK TABLE usuarios IN SHARE ROW EXCLUSIVE MODE"))
+
+    admin_atual = db.scalar(
+        select(Usuario)
+        .where(Usuario.id == admin.id)
+        .with_for_update()
+    )
+    if admin_atual is None or not admin_atual.ativo or admin_atual.perfil != "admin":
+        raise HTTPException(401, "Sessão administrativa inválida")
+
+    alvo = db.scalar(
+        select(Usuario)
+        .where(Usuario.id == usuario_id)
+        .with_for_update()
+    )
+    if alvo is None:
+        raise HTTPException(404, "Usuário não encontrado")
+
+    if alvo.ativo and alvo.perfil == "admin":
+        outros_admins_ativos = db.scalar(
+            select(func.count())
+            .select_from(Usuario)
+            .where(
+                Usuario.ativo.is_(True),
+                Usuario.perfil == "admin",
+                Usuario.id != alvo.id,
+            )
+        )
+        if outros_admins_ativos == 0:
+            raise HTTPException(400, "Não é possível excluir o último administrador ativo")
+
+    registrar(
+        db,
+        admin_atual.id,
+        "usuario_excluido",
+        f"id={alvo.id} perfil={alvo.perfil}",
+        ip_do_cliente(request),
+    )
+    db.delete(alvo)
+    db.commit()
 
 
 @router.post("/{usuario_id}/senha", status_code=204)

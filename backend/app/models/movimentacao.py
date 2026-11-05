@@ -47,9 +47,8 @@ class Movimentacao(Base):
 
     observacao: Mapped[str | None] = mapped_column(Text)
 
-    usuario_id: Mapped[int] = mapped_column(
-        ForeignKey("usuarios.id"),
-    )
+    # Identificador histórico: não é FK para permitir excluir a conta.
+    usuario_id: Mapped[int] = mapped_column()
 
     criado_em: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

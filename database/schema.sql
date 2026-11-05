@@ -1,4 +1,3 @@
-
 -- Sistema de estoque - Amigos do Zé Alguém
 
 CREATE TABLE usuarios (
@@ -21,7 +20,8 @@ CREATE TABLE itens (
     unidade     VARCHAR(10) NOT NULL CHECK (unidade IN ('kg', 'un', 'l', 'pacote')),
     saldo       NUMERIC(10,2) NOT NULL DEFAULT 0 CHECK (saldo >= 0),
     ativo       BOOLEAN NOT NULL DEFAULT TRUE,
-    criado_por  INTEGER NOT NULL REFERENCES usuarios(id),
+    -- ID histórico do criador; intencionalmente sem FK para usuarios.
+    criado_por  INTEGER NOT NULL,
     criado_em   TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE (nome, unidade)
 );
@@ -32,7 +32,8 @@ CREATE TABLE movimentacoes (
     tipo        VARCHAR(10) NOT NULL CHECK (tipo IN ('entrada', 'saida', 'estorno')),
     quantidade  NUMERIC(10,2) NOT NULL CHECK (quantidade > 0),
     observacao  TEXT,
-    usuario_id  INTEGER NOT NULL REFERENCES usuarios(id),
+    -- ID histórico do autor; intencionalmente sem FK para usuarios.
+    usuario_id  INTEGER NOT NULL,
     criado_em   TIMESTAMPTZ NOT NULL DEFAULT now(),
     estorno_de  BIGINT REFERENCES movimentacoes(id),
     motivo      TEXT,
@@ -62,7 +63,8 @@ CREATE TRIGGER trg_movimentacoes_imutavel
 -- registro de ações de segurança e administração (logins, usuários, senhas)
 CREATE TABLE auditoria (
     id          BIGSERIAL PRIMARY KEY,
-    usuario_id  INTEGER REFERENCES usuarios(id),  -- NULL: e-mail desconhecido no login
+    -- ID histórico; NULL continua permitido para e-mail desconhecido no login.
+    usuario_id  INTEGER,
     acao        VARCHAR(40) NOT NULL,
     detalhe     TEXT,
     ip          VARCHAR(45),
