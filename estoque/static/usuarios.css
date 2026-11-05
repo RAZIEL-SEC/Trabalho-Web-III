@@ -343,3 +343,12 @@ td button {
     transition-duration: 0.01ms !important;
   }
 }
+
+.theme-control{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--texto-suave)}.theme-control select{width:auto;min-height:38px;padding:6px 9px}
+html[data-theme="dark"] body{background:#101923;color:#e5edf5}
+html[data-theme="dark"] header,html[data-theme="dark"] section{background:#172431;border-color:#2b3b4a}
+html[data-theme="dark"] h1,html[data-theme="dark"] h2,html[data-theme="dark"] label,html[data-theme="dark"] td{color:#e5edf5}
+html[data-theme="dark"] nav a{color:#b5c4d2}html[data-theme="dark"] nav a:hover{background:#20394d;color:#7dd3fc}
+html[data-theme="dark"] input,html[data-theme="dark"] select{background:#101923;color:#edf4fa;border-color:#3a4b5b}
+html[data-theme="dark"] thead{background:#20303e}html[data-theme="dark"] th{color:#a8bac9;border-color:#2b3b4a}html[data-theme="dark"] td{border-color:#2b3b4a}
+html[data-theme="dark"] .theme-control select{background:#101923;color:#edf4fa;border-color:#3a4b5b}
