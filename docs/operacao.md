@@ -66,14 +66,12 @@ o painel de estoque pertence à VM.
 
 ## Histórico do diagnóstico de Cloudflare (31/10/2026)
 
-A checagem `Workers Builds: trabalho-web-iii` do commit `14f4d46`, no
-[PR #1](https://github.com/RAZIEL-SEC/Trabalho-Web-III/pull/1), informou falha
-no build `9f83e1a3-e06b-435e-9e8d-f9d51c28ffdd`. A API do GitHub forneceu
-somente um link para a Cloudflare: sem texto de log, sem anotações e sem
-execução correspondente no GitHub Actions. O usuário também informou que
-o link retornou “Page not found” ou falta de permissão. **O comando, a pasta
-de execução, a mensagem de erro e a causa dessa falha remota permanecem não
-confirmados**, até obter os logs e a configuração do painel com João.
+A API da Cloudflare permitiu recuperar os logs dos builds que falharam em
+23/10/2026. Um deles executou `npx wrangler deploy`, leu assets de
+`/opt/buildhome/repo/frontend` e falhou com o erro `100324`: configuração
+`_redirects` inválida, com loop infinito ao remover `.html` ou `/index`.
+Isso explica a falha antiga; a publicação atual foi separada para a pasta
+`site/`, que não contém aquela regra de redirecionamento.
 
 Foi confirmado separadamente um erro no repositório: `assets.directory`
 apontava para `./frontend`, resolvido como `site/frontend`, que não existe.
