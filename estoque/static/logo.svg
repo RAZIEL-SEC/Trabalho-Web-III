@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-labelledby="title desc">
+<title id="title">Amigos do Zé Alguém</title><desc id="desc">Boné azul com o nome Amigos do Zé Alguém e um coração vermelho.</desc>
+<style>
+.cap{fill:var(--logo-cap,#08adf2);stroke:var(--logo-outline,#07111b);stroke-width:5;stroke-linejoin:round}
+.brim{fill:var(--logo-cap,#08adf2);stroke:var(--logo-outline,#07111b);stroke-width:5}
+.stitch{fill:none;stroke:var(--logo-stitch,#075b91);stroke-width:1.5;stroke-dasharray:4 4}
+.word{font-family:Arial,Helvetica,sans-serif;font-weight:900;fill:var(--logo-text,#080d68);stroke:var(--logo-letter-outline,#fff);stroke-width:2.5;paint-order:stroke;letter-spacing:-1.5px}
+.heart{fill:var(--logo-heart,#ed101b)}
+</style>
+<path class="cap" d="M18 155 Q26 92 72 65 L145 20 Q159 10 174 20 L246 57 Q294 84 305 155 L295 180 Q160 205 25 180Z"/>
+<path class="brim" d="M25 151 Q92 91 159 91 Q236 91 296 151 Q312 168 294 182 Q160 218 27 182 Q8 172 25 151Z"/>
+<path class="stitch" d="M145 22 Q151 55 151 91 M160 18 Q166 55 166 91 M175 22 Q181 55 181 91 M39 132 Q31 155 27 174 M281 132 Q291 155 295 174"/>
+<ellipse cx="160" cy="19" rx="15" ry="8" fill="var(--logo-cap,#08adf2)" stroke="var(--logo-outline,#07111b)" stroke-width="4"/>
+<path d="M60 66 Q160 21 260 66" fill="none" stroke="var(--logo-outline,#07111b)" stroke-width="3"/>
+<text class="word" x="160" y="123" font-size="34" text-anchor="middle">AMIG</text>
+<path class="heart" d="M203 99 C192 82 170 94 181 111 L203 132 L225 111 C237 93 214 82 203 99Z"/>
+<text class="word" x="246" y="123" font-size="34" text-anchor="middle">S</text>
+<text class="word" x="160" y="159" font-size="34" text-anchor="middle">DO</text>
+<text class="word" x="160" y="197" font-size="34" text-anchor="middle" letter-spacing="-1.9px">ZÉ ALGUÉM</text>
+</svg>
