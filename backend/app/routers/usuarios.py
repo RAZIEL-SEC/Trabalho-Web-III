@@ -189,6 +189,7 @@ def excluir(
     admin_atual = db.scalar(
         select(Usuario)
         .where(Usuario.id == admin.id)
+        .execution_options(populate_existing=True)
         .with_for_update()
     )
     if admin_atual is None or not admin_atual.ativo or admin_atual.perfil != "admin":
