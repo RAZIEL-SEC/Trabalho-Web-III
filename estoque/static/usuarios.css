@@ -352,3 +352,7 @@ html[data-theme="dark"] nav a{color:#b5c4d2}html[data-theme="dark"] nav a:hover{
 html[data-theme="dark"] input,html[data-theme="dark"] select{background:#101923;color:#edf4fa;border-color:#3a4b5b}
 html[data-theme="dark"] thead{background:#20303e}html[data-theme="dark"] th{color:#a8bac9;border-color:#2b3b4a}html[data-theme="dark"] td{border-color:#2b3b4a}
 html[data-theme="dark"] .theme-control select{background:#101923;color:#edf4fa;border-color:#3a4b5b}
+
+.users-brand{display:flex;align-items:center;max-width:155px;padding:0!important;background:transparent!important}.users-brand img{display:block;width:100%;height:auto}
+nav a i,nav button i{margin-right:7px}
+html[data-theme="dark"] .users-brand{background:transparent!important}
