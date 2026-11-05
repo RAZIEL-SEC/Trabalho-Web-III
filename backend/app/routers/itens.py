@@ -81,9 +81,35 @@ def listar_itens(
 ):
     consulta = (
         select(Item)
+        .where(Item.ativo.is_(True))
         .order_by(Item.nome, Item.id)
         .offset(offset)
         .limit(limite)
     )
 
     return db.scalars(consulta).all()
+
+
+@router.delete("/{item_id}", response_model=ItemOut)
+def excluir_item(
+    item_id: int,
+    db: Session = Depends(get_db),
+    _usuario: Usuario = Depends(get_usuario_atual),
+):
+    item = db.scalar(
+        select(Item)
+        .where(Item.id == item_id)
+        .with_for_update()
+    )
+
+    if item is None or not item.ativo:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Item não encontrado.",
+        )
+
+    # Exclusão lógica: mantém o item para preservar o histórico de movimentações.
+    item.ativo = False
+    db.commit()
+    db.refresh(item)
+    return item
