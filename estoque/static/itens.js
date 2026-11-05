@@ -13,7 +13,7 @@ async function carregar(){
       const tr=document.createElement("tr");
       tr.append(cell(i.nome),cell(i.unidade),cell(Number(i.saldo).toLocaleString("pt-BR",{minimumFractionDigits:2})));
       const situacao=cell(""),tag=document.createElement("span");tag.className="pill ativo";tag.textContent="Ativo";situacao.append(tag);tr.append(situacao);
-      const acoes=cell(""),botao=document.createElement("button");botao.type="button";botao.className="button button-danger";botao.textContent="Excluir";botao.setAttribute("aria-label",`Excluir ${i.nome}`);
+      const acoes=cell(""),botao=document.createElement("button");botao.type="button";botao.className="button button-danger";botao.innerHTML='<i class="fa-solid fa-trash" aria-hidden="true"></i> Excluir';botao.setAttribute("aria-label",`Excluir ${i.nome}`);
       botao.addEventListener("click",()=>excluir(i,botao));acoes.append(botao);tr.append(acoes);corpo.append(tr);
     }
   }catch(e){feedback(e.message,"error")}
