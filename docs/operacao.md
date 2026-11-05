@@ -42,7 +42,8 @@ os comandos usam o arquivo `wrangler.jsonc` a partir dessa raiz.
 
 O arquivo `site/wrangler.jsonc` define `assets.directory` como `.`. O Wrangler
 resolve esse caminho em relação à pasta da configuração: o resultado é
-`site/`, e não a raiz do repositório. `site/.assetsignore` exclui a configuração
+`site/`, e não a raiz do repositório. Ele também declara `previews: {}`, exigido
+pelo comando `wrangler preview` para criar previews por branch. `site/.assetsignore` exclui a configuração
 e os artefatos locais do conjunto de arquivos servidos. Os diretórios
 `.wrangler/` também são ignorados pelo Git.
 
