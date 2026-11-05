@@ -297,3 +297,50 @@ def test_listagem_respeita_paginacao(
 )
 def test_paginacao_invalida_retorna_422(client_autenticado: TestClient, parametros: dict):
     assert client_autenticado.get("/itens", params=parametros).status_code == 422
+
+
+def test_excluir_item_desativa_sem_apagar_historico(
+    client_autenticado: TestClient, db: Session, usuario: Usuario
+):
+    from app.models.movimentacao import Movimentacao
+
+    item = Item(nome="Arroz", unidade="kg", criado_por=usuario.id)
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    movimentacao = Movimentacao(
+        item_id=item.id,
+        tipo="entrada",
+        quantidade=Decimal("5.00"),
+        usuario_id=usuario.id,
+    )
+    db.add(movimentacao)
+    db.commit()
+    item_id = item.id
+    movimentacao_id = movimentacao.id
+
+    response = client_autenticado.delete(f"/itens/{item_id}")
+
+    assert response.status_code == 200
+    assert response.json()["ativo"] is False
+    db.expire_all()
+    assert db.get(Item, item_id).ativo is False
+    assert db.get(Movimentacao, movimentacao_id) is not None
+    assert client_autenticado.get("/itens").json() == []
+    assert client_autenticado.delete(f"/itens/{item_id}").status_code == 404
+
+
+def test_excluir_item_exige_autenticacao(client: TestClient, db: Session, usuario: Usuario):
+    item = Item(nome="Arroz", unidade="kg", criado_por=usuario.id)
+    db.add(item)
+    db.commit()
+
+    response = client.delete(f"/itens/{item.id}")
+
+    assert response.status_code == 401
+    db.refresh(item)
+    assert item.ativo is True
+
+
+def test_excluir_item_inexistente_retorna_404(client_autenticado: TestClient):
+    assert client_autenticado.delete("/itens/999999").status_code == 404
