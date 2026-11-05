@@ -6,11 +6,13 @@
   <meta name="color-scheme" content="light dark">
   <meta name="robots" content="noindex">
   <title>Entrar · Amigos do Zé Alguém</title>
+  <link rel="icon" type="image/svg+xml" href="static/logo.svg"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <link rel="stylesheet" href="static/login.css">
 </head>
 <body>
   <main class="cartao">
-    <div class="marca marca-logo" data-logo aria-hidden="true"></div>
+    <div class="marca marca-logo" data-logo></div>
+    <label class="theme-control login-theme">Tema<select data-theme-select aria-label="Tema da interface"><option value="light">Claro</option><option value="dark">Escuro</option><option value="system">Automático (sistema)</option></select></label>
 
     <h1>Amigos do Zé Alguém</h1>
     <p class="subtitulo">Área da equipe · controle de estoque</p>
@@ -44,6 +46,7 @@
 
     <p class="rodape">Esqueceu a senha?<br>Peça a um administrador para redefini-la.</p>
   </main>
+  <script src="static/theme.js"></script>
   <script src="static/brand.js"></script>
   <script src="static/login.js"></script>
 </body>
