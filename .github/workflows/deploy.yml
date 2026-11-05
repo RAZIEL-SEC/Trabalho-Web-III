@@ -51,7 +51,7 @@ jobs:
           DATABASE_URL: postgresql+psycopg://postgres:postgres@127.0.0.1:5432/postgres
           SECRET_KEY: github-actions-test-secret-key-not-used-in-production
           COOKIE_SECURE: "false"
-        run: pytest -q
+        run: python -m pytest -q
 
   deploy:
     name: Atualizar aplicação na VPS
