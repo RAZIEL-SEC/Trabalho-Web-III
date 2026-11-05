@@ -32,6 +32,8 @@ desenvolvimento à produção. O PR deve continuar aberto para revisão e merge
 pelo João. Os comandos de produção dependem das permissões e autenticação
 do projeto na Cloudflare.
 
+As configurações de preview também foram propagadas aos ambientes de preview já existentes, para que cada branch use a raiz `site/` e o comando `npx wrangler versions upload --config wrangler.jsonc`.
+
 O problema de sincronização era que o Worker estava configurado para observar
 a branch `front-end`, enquanto a aplicação e o deploy da VPS usam `main`.
 Além disso, a raiz de build estava como `/`, embora o arquivo Wrangler esteja
