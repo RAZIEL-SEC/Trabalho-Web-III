@@ -13,10 +13,11 @@ O Worker `trabalho-web-iii` publica somente os arquivos de `site/`.
 Não é necessário iniciar Python, instalar `backend/requirements.txt` ou
 conectar PostgreSQL para publicar esse site.
 
-## Configuração esperada no painel
+## Configuração aplicada na Cloudflare
 
-Em **Workers & Pages > trabalho-web-iii > Settings > Build**, conferir com
-o responsável pela conta:
+A configuração do Worker `trabalho-web-iii` foi consultada e corrigida pela
+API da Cloudflare em 05/11/2026. Em **Workers & Pages > trabalho-web-iii >
+Settings > Builds**, os valores ativos são:
 
 | Configuração | Valor esperado para este repositório |
 | --- | --- |
@@ -24,18 +25,20 @@ o responsável pela conta:
 | Build command | Vazio: HTML, CSS, JavaScript e imagens já são arquivos estáticos. |
 | Deploy command | `npx wrangler deploy --config wrangler.jsonc` |
 | Production branch | `main` |
-| Preview/non-production command, se habilitado | `npx wrangler versions upload --config wrangler.jsonc` |
+| Preview/non-production command, se habilitado | `npx wrangler preview --config wrangler.jsonc` |
 
-`versions upload` cria uma versão para verificação sem promover a branch de
-desenvolvimento à produção. O PR deve continuar aberto para revisão e merge
-pelo João. Os comandos de produção dependem das permissões e autenticação
-do projeto na Cloudflare.
+`wrangler preview` cria/atualiza um preview isolado para a branch ou PR, sem
+promover essa versão à produção. O PR deve continuar aberto para revisão e
+merge. Os comandos de produção dependem das permissões e autenticação do
+projeto na Cloudflare.
 
-Esses são valores esperados, **não configurações lidas ou alteradas nesta
-investigação**: não houve acesso autenticado ao painel. Se for mantida a raiz
-do repositório como pasta de execução, o comando equivalente deve especificar
-`--config site/wrangler.jsonc`; não usar `--config site/wrangler.jsonc`
-quando a pasta de execução já for `site/`.
+As configurações de preview também foram propagadas aos ambientes de preview já existentes, para que cada branch use a raiz `site/` e o comando `npx wrangler preview --config wrangler.jsonc`.
+
+O problema de sincronização era que o Worker estava configurado para observar
+a branch `front-end`, enquanto a aplicação e o deploy da VPS usam `main`.
+Além disso, a raiz de build estava como `/`, embora o arquivo Wrangler esteja
+em `site/wrangler.jsonc`. A configuração foi alinhada para `main` e `site`;
+os comandos usam o arquivo `wrangler.jsonc` a partir dessa raiz.
 
 O arquivo `site/wrangler.jsonc` define `assets.directory` como `.`. O Wrangler
 resolve esse caminho em relação à pasta da configuração: o resultado é
@@ -63,16 +66,14 @@ Não há prefixo `/site` na URL pública. O caminho antigo
 `/templates/cadastro` não corresponde a um arquivo do site institucional;
 o painel de estoque pertence à VM.
 
-## Diagnóstico e validação local em 31/10/2026
+## Histórico do diagnóstico de Cloudflare (31/10/2026)
 
-A checagem `Workers Builds: trabalho-web-iii` do commit `14f4d46`, no
-[PR #1](https://github.com/RAZIEL-SEC/Trabalho-Web-III/pull/1), informou falha
-no build `9f83e1a3-e06b-435e-9e8d-f9d51c28ffdd`. A API do GitHub forneceu
-somente um link para a Cloudflare: sem texto de log, sem anotações e sem
-execução correspondente no GitHub Actions. O usuário também informou que
-o link retornou “Page not found” ou falta de permissão. **O comando, a pasta
-de execução, a mensagem de erro e a causa dessa falha remota permanecem não
-confirmados**, até obter os logs e a configuração do painel com João.
+A API da Cloudflare permitiu recuperar os logs dos builds que falharam em
+23/10/2026. Um deles executou `npx wrangler deploy`, leu assets de
+`/opt/buildhome/repo/frontend` e falhou com o erro `100324`: configuração
+`_redirects` inválida, com loop infinito ao remover `.html` ou `/index`.
+Isso explica a falha antiga; a publicação atual foi separada para a pasta
+`site/`, que não contém aquela regra de redirecionamento.
 
 Foi confirmado separadamente um erro no repositório: `assets.directory`
 apontava para `./frontend`, resolvido como `site/frontend`, que não existe.
@@ -103,14 +104,10 @@ instalado em cache, com a opção `--outdir` apontando para o cache na raiz.
 Nenhum desses comandos realizou deploy. Node e Wrangler foram usados de forma
 portátil no cache ignorado, sem adicionar dependências ao repositório.
 
-O comando de preview documentado também foi validado a partir de `site/`,
-pelo mesmo binário em cache, com código de saída `0`:
-
-```powershell
-npx --yes wrangler@4.148.0 versions upload --config wrangler.jsonc --dry-run
-```
-
-Foi usado um `--outdir` no cache da raiz; nenhuma versão foi enviada nesse teste.
+O comando `versions upload` também passou em dry-run local, mas não é o comando
+de preview usado pelo Workers Builds. Para PRs e branches, a configuração ativa
+usa `npx wrangler preview --config wrangler.jsonc`, conforme a documentação do
+Cloudflare Workers Builds.
 
 Também foi iniciado temporariamente `wrangler dev --local`, em
 `127.0.0.1:18787`, com a configuração de `site/`. Um script Python via entrada
@@ -126,3 +123,24 @@ não validam conteúdo visual ou integração das telas. Não foi repetida a su�
 do backend, pois nenhuma funcionalidade Python foi alterada nesta correção.
 Um dry-run local bem-sucedido não comprova o sucesso da execução remota:
 essa confirmação depende da nova checagem do PR e do acesso aos logs.
+
+
+## Sincronização automática e deploy da VPS (05/11/2026)
+
+A configuração da Cloudflare mostrava a branch de produção `front-end`, não
+`main`. A raiz de build era `/`, apesar de a configuração Wrangler estar em
+`site/wrangler.jsonc`. Foi corrigido na conta do Worker para:
+- branch de produção: `main`;
+- raiz: `site`;
+- deploy: `npx wrangler deploy --config wrangler.jsonc`;
+- preview: `npx wrangler preview --config wrangler.jsonc`.
+
+A execução mais recente do deploy da VPS falhou depois de iniciar os containers,
+não durante o SSH nem durante o build Docker. O comando de health check foi
+executado imediatamente após iniciar o container e recebeu `curl: (52) Empty
+reply from server`. O workflow agora aguarda a API por até 60 segundos,
+mostra os logs se ela não ficar saudável e só então limpa imagens antigas.
+Também atualiza apenas o serviço `app`, sem recriar o PostgreSQL.
+
+O workflow passou a executar a suíte `pytest` em um PostgreSQL temporário
+antes do deploy. Em Pull Requests, executa os testes sem publicar na VPS.
