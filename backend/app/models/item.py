@@ -5,7 +5,6 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     DateTime,
-    ForeignKey,
     Numeric,
     String,
     UniqueConstraint,
@@ -40,9 +39,8 @@ class Item(Base):
         server_default=text("true"),
     )
 
-    criado_por: Mapped[int] = mapped_column(
-        ForeignKey("usuarios.id"),
-    )
+    # Identificador histórico: não é FK para permitir excluir a conta.
+    criado_por: Mapped[int] = mapped_column()
 
     criado_em: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

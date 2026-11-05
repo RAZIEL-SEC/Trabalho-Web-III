@@ -1,4 +1,3 @@
-
 :root {
   --color-1: #EAF4FB;
   --color-2: #BFDDF2;
@@ -188,6 +187,22 @@ button:focus-visible,
 a:focus-visible {
   outline: 3px solid var(--foco);
   outline-offset: 3px;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* BOTÃO EXCLUIR */
+
+td button.btn-excluir {
+  margin-left: 8px;
+  background: #B42318;
+}
+
+td button.btn-excluir:hover {
+  background: #8F1D14;
 }
 
 /* BOTÃO SAIR */

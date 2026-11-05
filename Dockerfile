@@ -11,6 +11,7 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 COPY backend /srv/backend
 COPY estoque /srv/estoque
+COPY database /srv/database
 
 WORKDIR /srv/backend
 

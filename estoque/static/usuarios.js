@@ -1,6 +1,7 @@
 const corpo = document.getElementById("tabela");
 const msg = document.getElementById("msg");
 const form = document.getElementById("form-usuario");
+let usuarioAtual = null;
 
 function mostrar(texto, ok) {
   msg.textContent = texto;
@@ -33,6 +34,32 @@ async function alterar(id, mudanca) {
   carregar();
 }
 
+async function excluir(id, nome, botao) {
+  if (!confirm(`Tem certeza que deseja excluir permanentemente o usuário "${nome}"? Esta ação não pode ser desfeita.`)) {
+    return;
+  }
+
+  botao.disabled = true;
+  try {
+    const r = await fetch(`/usuarios/${id}`, { method: "DELETE" });
+    if (r.status === 401) {
+      window.location.href = "login.html";
+      return;
+    }
+    if (!r.ok) {
+      mostrar(erroDaApi(await r.json().catch(() => ({}))), false);
+      return;
+    }
+
+    mostrar("Usuário excluído. O histórico foi preservado.", true);
+    await carregar();
+  } catch {
+    mostrar("Sem conexão com o servidor.", false);
+  } finally {
+    botao.disabled = false;
+  }
+}
+
 async function carregar() {
   const r = await fetch("/usuarios");
   if (r.status === 401) return (window.location.href = "login.html");
@@ -54,6 +81,17 @@ async function carregar() {
     botao.textContent = u.ativo ? "Desativar" : "Reativar";
     botao.addEventListener("click", () => alterar(u.id, { ativo: !u.ativo }));
     acoes.append(botao);
+
+    // A conta autenticada nunca recebe um botão de autoexclusão.
+    if (usuarioAtual && u.id !== usuarioAtual.id) {
+      const excluirBotao = document.createElement("button");
+      excluirBotao.type = "button";
+      excluirBotao.textContent = "Excluir";
+      excluirBotao.className = "btn-excluir";
+      excluirBotao.addEventListener("click", () => excluir(u.id, u.nome, excluirBotao));
+      acoes.append(excluirBotao);
+    }
+
     tr.append(acoes);
     corpo.append(tr);
   }
@@ -90,5 +128,6 @@ sessao.then((u) => {
     window.location.href = "itens.html";
     return;
   }
+  usuarioAtual = u;
   carregar();
 });
