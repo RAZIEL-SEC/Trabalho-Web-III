@@ -13,10 +13,11 @@ O Worker `trabalho-web-iii` publica somente os arquivos de `site/`.
 Não é necessário iniciar Python, instalar `backend/requirements.txt` ou
 conectar PostgreSQL para publicar esse site.
 
-## Configuração esperada no painel
+## Configuração aplicada na Cloudflare
 
-Em **Workers & Pages > trabalho-web-iii > Settings > Build**, conferir com
-o responsável pela conta:
+A configuração do Worker `trabalho-web-iii` foi consultada e corrigida pela
+API da Cloudflare em 05/11/2026. Em **Workers & Pages > trabalho-web-iii >
+Settings > Builds**, os valores ativos são:
 
 | Configuração | Valor esperado para este repositório |
 | --- | --- |
@@ -31,11 +32,11 @@ desenvolvimento à produção. O PR deve continuar aberto para revisão e merge
 pelo João. Os comandos de produção dependem das permissões e autenticação
 do projeto na Cloudflare.
 
-Esses são valores esperados, **não configurações lidas ou alteradas nesta
-investigação**: não houve acesso autenticado ao painel. Se for mantida a raiz
-do repositório como pasta de execução, o comando equivalente deve especificar
-`--config site/wrangler.jsonc`; não usar `--config site/wrangler.jsonc`
-quando a pasta de execução já for `site/`.
+O problema de sincronização era que o Worker estava configurado para observar
+a branch `front-end`, enquanto a aplicação e o deploy da VPS usam `main`.
+Além disso, a raiz de build estava como `/`, embora o arquivo Wrangler esteja
+em `site/wrangler.jsonc`. A configuração foi alinhada para `main` e `site`;
+os comandos usam o arquivo `wrangler.jsonc` a partir dessa raiz.
 
 O arquivo `site/wrangler.jsonc` define `assets.directory` como `.`. O Wrangler
 resolve esse caminho em relação à pasta da configuração: o resultado é
@@ -63,7 +64,7 @@ Não há prefixo `/site` na URL pública. O caminho antigo
 `/templates/cadastro` não corresponde a um arquivo do site institucional;
 o painel de estoque pertence à VM.
 
-## Diagnóstico e validação local em 31/10/2026
+## Histórico do diagnóstico de Cloudflare (31/10/2026)
 
 A checagem `Workers Builds: trabalho-web-iii` do commit `14f4d46`, no
 [PR #1](https://github.com/RAZIEL-SEC/Trabalho-Web-III/pull/1), informou falha
@@ -126,3 +127,24 @@ não validam conteúdo visual ou integração das telas. Não foi repetida a su�
 do backend, pois nenhuma funcionalidade Python foi alterada nesta correção.
 Um dry-run local bem-sucedido não comprova o sucesso da execução remota:
 essa confirmação depende da nova checagem do PR e do acesso aos logs.
+
+
+## Sincronização automática e deploy da VPS (05/11/2026)
+
+A configuração da Cloudflare mostrava a branch de produção `front-end`, não
+`main`. A raiz de build era `/`, apesar de a configuração Wrangler estar em
+`site/wrangler.jsonc`. Foi corrigido na conta do Worker para:
+- branch de produção: `main`;
+- raiz: `site`;
+- deploy: `npx wrangler deploy --config wrangler.jsonc`;
+- preview: `npx wrangler versions upload --config wrangler.jsonc`.
+
+A execução mais recente do deploy da VPS falhou depois de iniciar os containers,
+não durante o SSH nem durante o build Docker. O comando de health check foi
+executado imediatamente após iniciar o container e recebeu `curl: (52) Empty
+reply from server`. O workflow agora aguarda a API por até 60 segundos,
+mostra os logs se ela não ficar saudável e só então limpa imagens antigas.
+Também atualiza apenas o serviço `app`, sem recriar o PostgreSQL.
+
+O workflow passou a executar a suíte `pytest` em um PostgreSQL temporário
+antes do deploy. Em Pull Requests, executa os testes sem publicar na VPS.
