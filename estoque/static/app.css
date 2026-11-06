@@ -64,3 +64,14 @@
 .users-main .table-wrap td:last-child .button{margin:2px 6px 2px 0}
 .users-main .feedback{min-height:1em}
 @media(max-width:560px){.users-main .section-head{align-items:flex-start}.users-main .form-actions .button{width:100%}}
+
+/* Logo original raster incorporada em SVG: renderização explícita em todas as telas. */
+.brand-mark{overflow:visible}
+.brand-mark .logo-imagem{display:block;width:100%;height:auto;max-height:132px;object-fit:contain;object-position:left center}
+.brand-mark svg{display:none}
+.history-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.history-actions [hidden],[data-so-admin][hidden]{display:none!important}
+.button-danger{display:inline-flex;align-items:center;gap:8px}
+:root[data-theme="dark"] .button-danger{background:#482b30;border-color:#744047;color:#ffb8b3}
+@media(max-width:850px){.brand-mark .logo-imagem{max-height:75px}.history-actions{width:100%;justify-content:flex-start}}
+@media(max-width:560px){.history-actions{display:grid;grid-template-columns:1fr;width:100%}.history-actions .button{width:100%}}
