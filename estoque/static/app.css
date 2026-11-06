@@ -6,28 +6,12 @@
 .button-danger{background:#fff1f0;color:#b42318;border:1px solid #fecdca}
 .button-danger:hover{background:#fee4e2;color:#912018}
 
-/* Tema controlado pelo usuário (claro/escuro/sistema). */
-:root{color-scheme:light}html[data-theme="dark"]{color-scheme:dark}
-html[data-theme="dark"] body{color:#e5edf5;background:#101923}
-html[data-theme="dark"] .sidebar,html[data-theme="dark"] .panel,html[data-theme="dark"] .stat-card,html[data-theme="dark"] .user-chip{background:#172431;border-color:#2b3b4a}
-html[data-theme="dark"] .brand{color:#f0f5fa}
-html[data-theme="dark"] .menu a{color:#b5c4d2}
-html[data-theme="dark"] .menu a:hover,html[data-theme="dark"] .menu a.active{background:#20394d;color:#7dd3fc}
-html[data-theme="dark"] .topbar h1,html[data-theme="dark"] .section-head h2{color:#edf4fa}
-html[data-theme="dark"] .eyebrow,html[data-theme="dark"] .muted,html[data-theme="dark"] .user-chip,html[data-theme="dark"] .stat-card span,html[data-theme="dark"] .stat-card small{color:#9aafc1}
-html[data-theme="dark"] .stat-card strong{color:#7dd3fc}
-html[data-theme="dark"] th{background:#20303e;color:#a8bac9}
-html[data-theme="dark"] td{color:#d0dce6;border-color:#2b3b4a}
-html[data-theme="dark"] .form-grid label{color:#c2d0dc}
-html[data-theme="dark"] .form-grid input,html[data-theme="dark"] .form-grid select,html[data-theme="dark"] .form-grid textarea{background:#101923;color:#edf4fa;border-color:#3a4b5b}
-html[data-theme="dark"] .button-outline{background:#172431;color:#8bd2ff;border-color:#3a5267}
-html[data-theme="dark"] .button-quiet{background:#243443;color:#d4e0ea}
-html[data-theme="dark"] .button-danger{background:#442323;color:#fecaca;border-color:#713333}
-html[data-theme="dark"] .empty{color:#9aafc1}
-.brand{display:block;width:100%;padding:0;background:transparent}.brand-mark{display:block;width:100%;height:auto;min-height:0;border-radius:0;background:transparent;color:inherit}
+
+/* Alinhamento consistente dos ícones com seus rótulos. */
+.menu a{display:flex;align-items:center;gap:12px;min-height:44px}
+.menu a i{display:inline-flex;align-items:center;justify-content:center;flex:0 0 18px;width:18px;margin:0;font-size:15px;line-height:1}
+.button{display:inline-flex;align-items:center;justify-content:center;gap:9px;line-height:1.25}
+.button i{display:inline-flex;align-items:center;justify-content:center;margin:0;font-size:13px;line-height:1}
+.section-head h2{display:flex;align-items:center;gap:9px}
+.section-head h2 i{display:inline-flex;align-items:center;justify-content:center;font-size:17px;line-height:1}
 .brand-image{display:block;width:100%;height:auto;max-height:132px;object-fit:contain}
-.theme-control{display:grid;gap:6px;margin:0 0 12px;color:#71869b;font-size:11px;font-weight:700}
-.theme-control select{width:100%;padding:9px 10px;border:1px solid #dce5ed;border-radius:8px;background:#fff;color:#405a70;font:inherit;font-size:12px}
-html[data-theme="dark"] .theme-control{color:#9aafc1}html[data-theme="dark"] .theme-control select{background:#101923;color:#edf4fa;border-color:#3a4b5b}
-.menu a i{width:18px;margin-right:8px;text-align:center}.button i{margin-right:7px}
-@media(max-width:850px){.theme-control{max-width:220px}}
