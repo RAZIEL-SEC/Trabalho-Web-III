@@ -237,3 +237,8 @@ input[aria-invalid="true"] {
 /* Ícones alinhados aos rótulos e ao botão de login. */
 label .material-symbols-outlined,.rotulo .material-symbols-outlined{display:inline-flex;align-items:center;vertical-align:middle;line-height:1;margin-right:7px}
 .rotulo{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+
+/* Ícones dos campos e do botão na mesma linha dos respectivos textos. */
+.campo label{display:flex;align-items:center;gap:7px}
+.campo label .material-symbols-outlined,.rotulo .material-symbols-outlined{display:inline-flex;align-items:center;justify-content:center;width:1.15em;height:1.15em;font-size:1.15em;line-height:1;flex:0 0 auto;margin:0}
+.rotulo{display:inline-flex;align-items:center;justify-content:center;gap:8px}
