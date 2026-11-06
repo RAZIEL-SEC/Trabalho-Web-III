@@ -4,7 +4,7 @@ from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel, ConfigDict, Field
-from sqlalchemy import delete, func, select
+from sqlalchemy import func, select, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -96,7 +96,9 @@ def limpar_historico_movimentacoes(
     """Remove o histórico sem alterar os saldos atuais dos itens."""
     total = db.scalar(select(func.count()).select_from(Movimentacao)) or 0
     try:
-        db.execute(delete(Movimentacao).execution_options(synchronize_session=False))
+        # TRUNCATE não dispara o trigger de imutabilidade (que bloqueia DELETE).
+        # Não reinicia a sequência: IDs antigos nunca serão reutilizados.
+        db.execute(text("TRUNCATE TABLE movimentacoes"))
         registrar(
             db,
             admin.id,

@@ -61,6 +61,17 @@ def test_administrador_limpa_historico_sem_alterar_saldos(
     assert auditoria[0].usuario_id == usuario.id
     assert "registros_removidos=2" in auditoria[0].detalhe
 
+    # A limpeza não pode desativar os próximos registros do histórico.
+    novo = client_autenticado.post(
+        "/movimentacoes",
+        json={"item_id": item_id, "tipo": "entrada", "quantidade": "1.00"},
+    )
+    assert novo.status_code == 201
+    historico = client_autenticado.get("/movimentacoes?limite=10")
+    assert historico.status_code == 200
+    assert len(historico.json()) == 1
+    assert historico.json()[0]["id"] == novo.json()["id"]
+
 
 def test_limpar_historico_sem_registros_e_seguro(
     client_autenticado: TestClient, db: Session, usuario: Usuario
