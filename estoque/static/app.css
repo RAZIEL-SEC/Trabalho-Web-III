@@ -78,3 +78,6 @@
 
 /* Mantém a marca sem fundo também no tema escuro. */
 .brand,.brand-mark,.brand-mark .logo-imagem{background-color:transparent!important}
+
+/* Remove visual do fundo branco da imagem da marca sobre a sidebar. */
+.brand-mark .logo-imagem{mix-blend-mode:multiply;background:transparent!important}
