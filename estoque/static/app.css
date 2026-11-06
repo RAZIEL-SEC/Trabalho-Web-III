@@ -5,23 +5,14 @@
 .brand-mark svg{display:block;width:100%;height:auto;max-height:132px}
 .button-danger{background:#fff1f0;color:#b42318;border:1px solid #fecdca}
 .button-danger:hover{background:#fee4e2;color:#912018}
-@media(prefers-color-scheme:dark){
-:root{color:#e5edf5;background:#101923;color-scheme:dark}
-.sidebar,.panel,.stat-card,.user-chip{background:#172431;border-color:#2b3b4a}
-.brand{color:#f0f5fa}
-.brand-mark{background:transparent}
-.brand-mark svg{--logo-cap:#38bdf8;--logo-text:#f8fafc;--logo-heart:#fb7185;--logo-outline:#dbe7f0;--logo-letter-outline:#172431;--logo-stitch:#075985}
-.menu a{color:#b5c4d2}
-.menu a:hover,.menu a.active{background:#20394d;color:#7dd3fc}
-.topbar h1,.section-head h2{color:#edf4fa}
-.eyebrow,.muted,.user-chip,.stat-card span,.stat-card small{color:#9aafc1}
-.stat-card strong{color:#7dd3fc}
-th{background:#20303e;color:#a8bac9}
-td{color:#d0dce6;border-color:#2b3b4a}
-.form-grid label{color:#c2d0dc}
-.form-grid input,.form-grid select,.form-grid textarea{background:#101923;color:#edf4fa;border-color:#3a4b5b}
-.button-outline{background:#172431;color:#8bd2ff;border-color:#3a5267}
-.button-quiet{background:#243443;color:#d4e0ea}
-.button-danger{background:#442323;color:#fecaca;border-color:#713333}
-.empty{color:#9aafc1}
-}
+
+
+/* Alinhamento vertical e espaçamento uniforme dos ícones. */
+.menu a{display:flex;align-items:center;gap:12px;min-height:44px}
+.menu a .material-symbols-outlined{display:inline-flex;align-items:center;justify-content:center;flex:0 0 20px;width:20px;font-size:20px;line-height:1;vertical-align:middle}
+.button{display:inline-flex;align-items:center;justify-content:center;gap:9px;line-height:1.25}
+.button .material-symbols-outlined,.section-head h2 .material-symbols-outlined{display:inline-flex;align-items:center;justify-content:center;line-height:1;vertical-align:middle}
+.section-head h2{display:flex;align-items:center;gap:9px}
+.brand{display:block;width:100%;padding:0;background:transparent}
+.brand-mark{display:block;width:100%;height:auto;min-height:0;border-radius:0;background:transparent}
+.brand-mark svg{display:block;width:100%;height:auto;max-height:132px}
