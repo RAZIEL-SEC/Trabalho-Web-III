@@ -78,7 +78,11 @@ async function carregar() {
     const acoes = document.createElement("td");
     const botao = document.createElement("button");
     botao.type = "button";
-    botao.textContent = u.ativo ? "Desativar" : "Reativar";
+    botao.className = "button button-outline";
+    const statusIcon = document.createElement("i");
+    statusIcon.className = u.ativo ? "fa-solid fa-user-slash" : "fa-solid fa-user-check";
+    statusIcon.setAttribute("aria-hidden", "true");
+    botao.append(statusIcon, document.createTextNode(u.ativo ? "Desativar" : "Reativar"));
     botao.addEventListener("click", () => alterar(u.id, { ativo: !u.ativo }));
     acoes.append(botao);
 
@@ -86,8 +90,11 @@ async function carregar() {
     if (usuarioAtual && u.id !== usuarioAtual.id) {
       const excluirBotao = document.createElement("button");
       excluirBotao.type = "button";
-      excluirBotao.textContent = "Excluir";
-      excluirBotao.className = "btn-excluir";
+      excluirBotao.className = "button button-danger";
+      const deleteIcon = document.createElement("i");
+      deleteIcon.className = "fa-solid fa-trash";
+      deleteIcon.setAttribute("aria-hidden", "true");
+      excluirBotao.append(deleteIcon, document.createTextNode("Excluir"));
       excluirBotao.addEventListener("click", () => excluir(u.id, u.nome, excluirBotao));
       acoes.append(excluirBotao);
     }
