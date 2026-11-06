@@ -1,65 +1,53 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Usuários - Estoque</title>
-  <link rel="icon" type="image/svg+xml" href="static/logo.svg"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-  <link rel="stylesheet" href="static/usuarios.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Usuários · Amigos do Zé Alguém</title>
+  <link rel="icon" type="image/svg+xml" href="static/logo.svg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="static/app.css">
 </head>
 <body>
-  <header>
-    <nav>
-      <a class="users-brand" href="index.html" aria-label="Amigos do Zé Alguém"><img src="static/logo.svg" alt="Amigos do Zé Alguém"></a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="index.html" aria-label="Amigos do Zé Alguém - início"><span class="brand-mark" data-logo></span></a>
+    <nav class="menu">
+      <a href="index.html"><i class="fa-solid fa-house" aria-hidden="true"></i> Visão geral</a>
       <a href="itens.html"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i> Itens</a>
       <a href="movimentacoes.html"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> Movimentações</a>
       <a href="historico.html"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Histórico</a>
-      <a href="usuarios.html" data-so-admin hidden><i class="fa-solid fa-users" aria-hidden="true"></i> Usuários</a>
-      <label class="theme-control">Tema<select data-theme-select aria-label="Tema da interface"><option value="light">Claro</option><option value="dark">Escuro</option><option value="system">Automático</option></select></label>
-      <button type="button" data-sair><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sair</button>
-      <button type="button" data-sair-todos><i class="fa-solid fa-power-off" aria-hidden="true"></i> Sair de todos os dispositivos</button>
+      <a class="active" href="usuarios.html" data-so-admin hidden><i class="fa-solid fa-users" aria-hidden="true"></i> Usuários</a>
     </nav>
-  </header>
-  <main>
-    <h1>Usuários</h1>
-
-    <section>
-      <h2>Novo usuário</h2>
-      <form id="form-usuario">
-        <label>Nome
-          <input type="text" name="nome" required minlength="2" maxlength="100">
-        </label>
-        <label>E-mail
-          <input type="email" name="email" required maxlength="150" autocomplete="off">
-        </label>
-        <label>Senha inicial (mínimo 10 caracteres)
-          <input type="password" name="senha" required minlength="10" maxlength="200" autocomplete="new-password">
-        </label>
-        <label>Perfil
-          <select name="perfil">
-            <option value="operador">Operador</option>
-            <option value="admin">Administrador</option>
-          </select>
-        </label>
-        <button type="submit">Cadastrar</button>
-        <p id="msg" role="status"></p>
+    <div class="side-bottom">
+      <button class="button button-quiet" data-sair><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sair da conta</button>
+      <button class="button button-outline" data-sair-todos style="width:100%;margin-top:8px"><i class="fa-solid fa-power-off" aria-hidden="true"></i> Sair de todos os dispositivos</button>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div><p class="eyebrow">ADMINISTRAÇÃO</p><h1>Usuários</h1></div>
+      <div class="user-chip">Gerenciamento de acessos</div>
+    </header>
+    <section class="panel">
+      <div class="section-head"><div><p class="eyebrow">NOVO ACESSO</p><h2><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Cadastrar usuário</h2></div></div>
+      <form id="form-usuario" class="form-grid">
+        <label>Nome<input type="text" name="nome" required minlength="2" maxlength="100" autocomplete="name"></label>
+        <label>E-mail<input type="email" name="email" required maxlength="150" autocomplete="off"></label>
+        <label>Senha inicial (mínimo 10 caracteres)<input type="password" name="senha" required minlength="10" maxlength="200" autocomplete="new-password"></label>
+        <label>Perfil<select name="perfil"><option value="operador">Operador</option><option value="admin">Administrador</option></select></label>
+        <div class="form-actions"><button class="button" type="submit"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Cadastrar usuário</button></div>
+        <p id="msg" class="feedback" role="status"></p>
       </form>
     </section>
-
-    <section>
-      <h2>Usuários cadastrados</h2>
-      <div style="overflow-x:auto">
-        <table>
-          <thead>
-            <tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Situação</th><th></th></tr>
-          </thead>
-          <tbody id="tabela"></tbody>
-        </table>
-      </div>
+    <section class="panel">
+      <div class="section-head"><div><p class="eyebrow">CONTAS DO SISTEMA</p><h2><i class="fa-solid fa-users" aria-hidden="true"></i> Usuários cadastrados</h2><p class="muted">Gerencie os perfis e o acesso da equipe.</p></div></div>
+      <div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="tabela"><tr><td colspan="5" class="empty">Carregando…</td></tr></tbody></table></div>
     </section>
   </main>
-  <script src="static/theme.js"></script>
-  <script src="static/auth.js"></script>
-  <script src="static/usuarios.js"></script>
+</div>
+<script src="static/brand.js"></script>
+<script src="static/auth.js"></script>
+<script src="static/usuarios.js"></script>
 </body>
 </html>
