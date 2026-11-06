@@ -7,12 +7,14 @@
 .button-danger:hover{background:#fee4e2;color:#912018}
 
 
-/* Alinhamento vertical e espaçamento uniforme dos ícones. */
-.menu a{display:flex;align-items:center;gap:12px;min-height:44px}
-.menu a .material-symbols-outlined{display:inline-flex;align-items:center;justify-content:center;flex:0 0 20px;width:20px;font-size:20px;line-height:1;vertical-align:middle}
-.button{display:inline-flex;align-items:center;justify-content:center;gap:9px;line-height:1.25}
-.button .material-symbols-outlined,.section-head h2 .material-symbols-outlined{display:inline-flex;align-items:center;justify-content:center;line-height:1;vertical-align:middle}
-.section-head h2{display:flex;align-items:center;gap:9px}
+
+/* Navegação e ações: ícones alinhados à linha de base do texto. */
+.menu a{display:flex;align-items:center;gap:10px;min-height:44px;line-height:1.35}
+.menu a .material-symbols-outlined{display:inline-flex;align-items:center;justify-content:center;flex:0 0 20px;width:20px;height:20px;font-size:20px;line-height:1;vertical-align:middle}
+.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1.35}
+.button .material-symbols-outlined,.section-head h2 .material-symbols-outlined,.topbar .material-symbols-outlined{display:inline-flex;align-items:center;justify-content:center;width:1.2em;height:1.2em;font-size:1.2em;line-height:1;vertical-align:middle;flex:0 0 auto}
+.section-head h2{display:flex;align-items:center;gap:8px}
 .brand{display:block;width:100%;padding:0;background:transparent}
 .brand-mark{display:block;width:100%;height:auto;min-height:0;border-radius:0;background:transparent}
 .brand-mark svg{display:block;width:100%;height:auto;max-height:132px}
+@media(max-width:850px){.brand{width:150px}.brand-mark svg{max-height:75px}}
