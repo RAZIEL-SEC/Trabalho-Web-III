@@ -3,6 +3,7 @@
 .brand{display:block;width:100%;padding:0;background:transparent}
 .brand-mark{display:block;width:100%;height:auto;min-height:0;border-radius:0;background:transparent;color:inherit}
 .brand-mark svg{display:block;width:100%;height:auto;max-height:132px}
+.brand-mark .logo-imagem{display:block;width:100%;height:auto;max-height:132px;object-fit:contain}
 .button-danger{background:#fff1f0;color:#b42318;border:1px solid #fecdca}
 .button-danger:hover{background:#fee4e2;color:#912018}
 
@@ -17,7 +18,7 @@
 .brand{display:block;width:100%;padding:0;background:transparent}
 .brand-mark{display:block;width:100%;height:auto;min-height:0;border-radius:0;background:transparent}
 .brand-mark svg{display:block;width:100%;height:auto;max-height:132px}
-@media(max-width:850px){.brand{width:150px}.brand-mark svg{max-height:75px}}
+@media(max-width:850px){.brand{width:150px}.brand-mark svg{max-height:75px}.brand-mark .logo-imagem{max-height:75px}}
 
 
 /* Seletor de aparência */
