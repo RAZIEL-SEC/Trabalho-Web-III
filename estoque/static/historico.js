@@ -1,1 +1,91 @@
-const corpo=document.getElementById("historico-lista"),msg=document.getElementById("historico-msg");function cell(t){const e=document.createElement("td");e.textContent=t??"—";return e}async function carregar(){corpo.innerHTML='<tr><td colspan="6" class="empty">Carregando…</td></tr>';try{const r=await fetch("/movimentacoes?limite=200");if(r.status===401){location.href="login.html";return}if(!r.ok)throw Error("Não foi possível consultar o histórico.");const dados=await r.json();corpo.replaceChildren();if(!dados.length){const tr=document.createElement("tr"),td=cell("Nenhuma movimentação registrada.");td.colSpan=6;td.className="empty";tr.append(td);corpo.append(tr)}for(const m of dados){const tr=document.createElement("tr");tr.append(cell(new Date(m.criado_em).toLocaleString("pt-BR")),cell(m.item_nome));const td=cell(""),tag=document.createElement("span");tag.className="pill "+m.tipo;tag.textContent=m.tipo;td.append(tag);tr.append(td,cell(Number(m.quantidade).toLocaleString("pt-BR",{minimumFractionDigits:2})),cell(m.usuario_id),cell(m.motivo||m.observacao))}}catch(e){msg.textContent=e.message;msg.className="feedback error"}}document.getElementById("historico-atualizar").addEventListener("click",carregar);carregar();
+const corpo = document.getElementById("historico-lista");
+const msg = document.getElementById("historico-msg");
+const botaoLimpar = document.getElementById("historico-limpar");
+
+function cell(texto) {
+  const elemento = document.createElement("td");
+  elemento.textContent = texto ?? "—";
+  return elemento;
+}
+
+async function carregar() {
+  corpo.innerHTML = '<tr><td colspan="6" class="empty">Carregando…</td></tr>';
+  try {
+    const resposta = await fetch("/movimentacoes?limite=200");
+    if (resposta.status === 401) {
+      location.href = "login.html";
+      return;
+    }
+    if (!resposta.ok) throw new Error("Não foi possível consultar o histórico.");
+
+    const dados = await resposta.json();
+    corpo.replaceChildren();
+    if (!dados.length) {
+      const linha = document.createElement("tr");
+      const celula = cell("Nenhuma movimentação registrada.");
+      celula.colSpan = 6;
+      celula.className = "empty";
+      linha.append(celula);
+      corpo.append(linha);
+    }
+
+    for (const movimentacao of dados) {
+      const linha = document.createElement("tr");
+      linha.append(
+        cell(new Date(movimentacao.criado_em).toLocaleString("pt-BR")),
+        cell(movimentacao.item_nome),
+      );
+      const tipo = cell("");
+      const etiqueta = document.createElement("span");
+      etiqueta.className = "pill " + movimentacao.tipo;
+      etiqueta.textContent = movimentacao.tipo;
+      tipo.append(etiqueta);
+      linha.append(
+        tipo,
+        cell(Number(movimentacao.quantidade).toLocaleString("pt-BR", { minimumFractionDigits: 2 })),
+        cell(movimentacao.usuario_id),
+        cell(movimentacao.motivo || movimentacao.observacao),
+      );
+      corpo.append(linha);
+    }
+  } catch (erro) {
+    msg.textContent = erro.message;
+    msg.className = "feedback error";
+  }
+}
+
+async function limparHistorico() {
+  const confirmacao = window.prompt(
+    "ATENÇÃO: isso apagará permanentemente todos os registros de movimentação. Os saldos atuais dos itens serão mantidos.\n\nDigite LIMPAR para confirmar:",
+  );
+  if (confirmacao !== "LIMPAR") return;
+
+  botaoLimpar.disabled = true;
+  msg.textContent = "Limpando histórico…";
+  msg.className = "feedback";
+  try {
+    const resposta = await fetch("/movimentacoes/historico", { method: "DELETE" });
+    if (resposta.status === 401) {
+      location.href = "login.html";
+      return;
+    }
+    if (resposta.status === 403) {
+      throw new Error("Apenas administradores podem limpar o histórico.");
+    }
+    const dados = await resposta.json().catch(() => ({}));
+    if (!resposta.ok) throw new Error(dados.detail || "Não foi possível limpar o histórico.");
+
+    msg.textContent = `${dados.removidas} registro(s) removido(s). Os saldos atuais foram preservados.`;
+    msg.className = "feedback success";
+    await carregar();
+  } catch (erro) {
+    msg.textContent = erro.message;
+    msg.className = "feedback error";
+  } finally {
+    botaoLimpar.disabled = false;
+  }
+}
+
+document.getElementById("historico-atualizar").addEventListener("click", carregar);
+if (botaoLimpar) botaoLimpar.addEventListener("click", limparHistorico);
+carregar();
