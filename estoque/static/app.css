@@ -81,18 +81,3 @@
 
 /* Remove visual do fundo branco da imagem da marca sobre a sidebar. */
 .brand-mark .logo-imagem{mix-blend-mode:multiply;background:transparent!important}
-
-/* Tema escuro: textos claros mantendo a identidade azul do sistema. */
-:root[data-theme="dark"]{color:#d7e5f2}
-:root[data-theme="dark"] .main,:root[data-theme="dark"] .panel,:root[data-theme="dark"] .stat-card{color:#d7e5f2}
-:root[data-theme="dark"] .panel h1,:root[data-theme="dark"] .panel h2,:root[data-theme="dark"] .panel h3,:root[data-theme="dark"] .panel strong,:root[data-theme="dark"] .stat-card strong{color:#eaf4fc}
-:root[data-theme="dark"] .panel p,:root[data-theme="dark"] .panel label,:root[data-theme="dark"] .panel span:not(.pill),:root[data-theme="dark"] .panel small{color:#b8cde0}
-:root[data-theme="dark"] .menu a{color:#b7cde0}
-:root[data-theme="dark"] .menu a:hover,:root[data-theme="dark"] .menu a.active{color:#9ed2f4}
-:root[data-theme="dark"] .eyebrow{color:#8fc5e8}
-:root[data-theme="dark"] .muted,:root[data-theme="dark"] .empty{color:#91abc2}
-:root[data-theme="dark"] .text-link{color:#8fc9ef}
-:root[data-theme="dark"] th{color:#b9d9ef}
-:root[data-theme="dark"] td{color:#c9dbea}
-:root[data-theme="dark"] .form-grid label{color:#c4d8e9}
-:root[data-theme="dark"] .button-quiet{color:#d5e7f5}
