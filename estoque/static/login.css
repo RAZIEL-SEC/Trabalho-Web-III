@@ -28,31 +28,7 @@
 
   --sombra: 0 2px 5px rgb(42 111 168 / 5%), 0 12px 32px rgb(42 111 168 / 10%);
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --fundo: #101c29;
-    --cartao: #192b3b;
-    --texto: #eaf4fb;
-    --texto-suave: #bfddf2;
-    --borda: #34536d;
 
-    --destaque: #4e9bd1;
-    --destaque-hover: #8cc3e8;
-    --destaque-texto: #10283c;
-
-    --foco: #8cc3e8;
-
-    --erro-fundo: #3a2025;
-    --erro-borda: #8c4b53;
-    --erro-texto: #ffc2c2;
-
-    --aviso-fundo: #1d354a;
-    --aviso-borda: #4e9bd1;
-    --aviso-texto: #bfddf2;
-
-    --sombra: 0 2px 5px rgb(0 0 0 / 30%), 0 12px 32px rgb(0 0 0 / 35%);
-  }
-}
 
 * {
   box-sizing: border-box;
@@ -256,4 +232,8 @@ input[aria-invalid="true"] {
 /* A marca SVG é inline para adaptar as cores ao tema do login. */
 .marca-logo{display:block;width:min(100%,18rem);height:auto;margin:0 auto 1rem;background:transparent;border-radius:0}
 .marca-logo svg{display:block;width:100%;height:auto;--logo-cap:var(--color-4);--logo-text:var(--color-5);--logo-heart:#ed101b;--logo-outline:var(--texto);--logo-letter-outline:var(--cartao);--logo-stitch:var(--color-5)}
-@media(prefers-color-scheme:dark){.marca-logo svg{--logo-cap:#38bdf8;--logo-text:#f8fafc;--logo-heart:#fb7185;--logo-outline:#dbe7f0;--logo-letter-outline:#192b3b;--logo-stitch:#075985}}
+
+
+/* Ícones alinhados aos rótulos e ao botão de login. */
+label .material-symbols-outlined,.rotulo .material-symbols-outlined{display:inline-flex;align-items:center;vertical-align:middle;line-height:1;margin-right:7px}
+.rotulo{display:inline-flex;align-items:center;justify-content:center;gap:8px}
