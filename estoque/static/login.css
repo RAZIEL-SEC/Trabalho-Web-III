@@ -242,3 +242,7 @@ label .material-symbols-outlined,.rotulo .material-symbols-outlined{display:inli
 .campo label{display:flex;align-items:center;gap:7px}
 .campo label .material-symbols-outlined,.rotulo .material-symbols-outlined{display:inline-flex;align-items:center;justify-content:center;width:1.15em;height:1.15em;font-size:1.15em;line-height:1;flex:0 0 auto;margin:0}
 .rotulo{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+
+/* Exibe a imagem original da instituição sem depender de injeção JavaScript. */
+.marca-logo{display:block;width:min(100%,20rem);height:auto;margin:0 auto 1.25rem;padding:0;background:transparent;border-radius:0}
+.marca-logo .logo-imagem{display:block;width:100%;height:auto;object-fit:contain}

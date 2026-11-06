@@ -2,16 +2,17 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel, ConfigDict, Field
-from sqlalchemy import select
+from sqlalchemy import delete, func, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.core.deps import get_db, get_usuario_atual
+from app.core.deps import get_admin_atual, get_db, get_usuario_atual
 from app.models.item import Item
 from app.models.movimentacao import Movimentacao
 from app.models.usuario import Usuario
+from app.services.auditoria import ip_do_cliente, registrar
 from app.services.estoque import (
     ConflitoEstoque,
     ItemNaoEncontrado,
@@ -84,6 +85,31 @@ def cadastrar_movimentacao(
         raise
 
     return resposta
+
+
+@router.delete("/historico")
+def limpar_historico_movimentacoes(
+    request: Request,
+    db: Session = Depends(get_db),
+    admin: Usuario = Depends(get_admin_atual),
+):
+    """Remove o histórico sem alterar os saldos atuais dos itens."""
+    total = db.scalar(select(func.count()).select_from(Movimentacao)) or 0
+    try:
+        db.execute(delete(Movimentacao).execution_options(synchronize_session=False))
+        registrar(
+            db,
+            admin.id,
+            "historico_movimentacoes_limpo",
+            f"registros_removidos={total}; saldos_preservados=true",
+            ip_do_cliente(request),
+        )
+        db.commit()
+    except SQLAlchemyError:
+        db.rollback()
+        raise
+
+    return {"removidas": total, "saldos_preservados": True}
 
 
 class MovimentacaoHistoricoOut(BaseModel):

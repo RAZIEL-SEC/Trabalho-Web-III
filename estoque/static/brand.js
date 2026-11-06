@@ -1,2 +1,15 @@
-// Injeta o SVG inline para herdar as variáveis de cor do tema atual.
-(async()=>{try{const response=await fetch("static/logo.svg");if(!response.ok)throw new Error("Logo indisponível");const markup=await response.text();document.querySelectorAll("[data-logo]").forEach(slot=>{slot.innerHTML=markup;const svg=slot.querySelector("svg");if(svg){svg.setAttribute("focusable","false");svg.setAttribute("aria-hidden","true")}})}catch(error){console.error(error)}})();
+// Usa diretamente a arte original incorporada em logo.svg.
+// Caminho absoluto para funcionar igualmente no login e em todas as telas internas.
+(() => {
+  const logoUrl = "/estoque/static/logo.svg";
+  document.querySelectorAll("[data-logo]").forEach((slot) => {
+    const imagem = document.createElement("img");
+    imagem.src = logoUrl;
+    imagem.alt = "";
+    imagem.setAttribute("aria-hidden", "true");
+    imagem.decoding = "async";
+    imagem.loading = "eager";
+    imagem.className = "logo-imagem";
+    slot.replaceChildren(imagem);
+  });
+})();
