@@ -75,3 +75,6 @@
 :root[data-theme="dark"] .button-danger{background:#482b30;border-color:#744047;color:#ffb8b3}
 @media(max-width:850px){.brand-mark .logo-imagem{max-height:75px}.history-actions{width:100%;justify-content:flex-start}}
 @media(max-width:560px){.history-actions{display:grid;grid-template-columns:1fr;width:100%}.history-actions .button{width:100%}}
+
+/* Mantém a marca sem fundo também no tema escuro. */
+.brand,.brand-mark,.brand-mark .logo-imagem{background-color:transparent!important}
