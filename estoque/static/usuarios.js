@@ -78,7 +78,12 @@ async function carregar() {
     const acoes = document.createElement("td");
     const botao = document.createElement("button");
     botao.type = "button";
-    botao.textContent = u.ativo ? "Desativar" : "Reativar";
+    botao.className = "button button-outline";
+    const statusIcon = document.createElement("span");
+    statusIcon.className = "material-symbols-outlined";
+    statusIcon.setAttribute("aria-hidden", "true");
+    statusIcon.textContent = u.ativo ? "person_off" : "person_check";
+    botao.append(statusIcon, document.createTextNode(u.ativo ? "Desativar" : "Reativar"));
     botao.addEventListener("click", () => alterar(u.id, { ativo: !u.ativo }));
     acoes.append(botao);
 
@@ -86,8 +91,12 @@ async function carregar() {
     if (usuarioAtual && u.id !== usuarioAtual.id) {
       const excluirBotao = document.createElement("button");
       excluirBotao.type = "button";
-      excluirBotao.textContent = "Excluir";
-      excluirBotao.className = "btn-excluir";
+      excluirBotao.className = "button button-danger";
+      const deleteIcon = document.createElement("span");
+      deleteIcon.className = "material-symbols-outlined";
+      deleteIcon.setAttribute("aria-hidden", "true");
+      deleteIcon.textContent = "delete";
+      excluirBotao.append(deleteIcon, document.createTextNode("Excluir"));
       excluirBotao.addEventListener("click", () => excluir(u.id, u.nome, excluirBotao));
       acoes.append(excluirBotao);
     }
