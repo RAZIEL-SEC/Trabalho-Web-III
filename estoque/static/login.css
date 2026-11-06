@@ -246,3 +246,6 @@ label .material-symbols-outlined,.rotulo .material-symbols-outlined{display:inli
 /* Exibe a imagem original da instituição sem depender de injeção JavaScript. */
 .marca-logo{display:block;width:min(100%,20rem);height:auto;margin:0 auto 1.25rem;padding:0;background:transparent;border-radius:0}
 .marca-logo .logo-imagem{display:block;width:100%;height:auto;object-fit:contain}
+
+/* Mantém a marca do login transparente em qualquer tema. */
+.marca-logo,.marca-logo .logo-imagem{background-color:transparent!important}
