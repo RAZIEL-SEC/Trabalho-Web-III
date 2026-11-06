@@ -18,3 +18,39 @@
 .brand-mark{display:block;width:100%;height:auto;min-height:0;border-radius:0;background:transparent}
 .brand-mark svg{display:block;width:100%;height:auto;max-height:132px}
 @media(max-width:850px){.brand{width:150px}.brand-mark svg{max-height:75px}}
+
+
+/* Seletor de aparência */
+.appearance-picker{display:grid;gap:7px;margin:0 0 12px;padding:12px;border:1px solid #e5ebf2;border-radius:10px;background:#f8fafc}
+.appearance-picker label{display:flex;align-items:center;gap:7px;color:#667b91;font-size:12px;font-weight:700}
+.appearance-picker label .material-symbols-outlined{font-size:18px;line-height:1}
+.appearance-picker select{width:100%;min-height:38px;padding:8px 10px;border:1px solid #dce5ed;border-radius:7px;background:#fff;color:#203d58;font:inherit;font-size:12px}
+.appearance-picker select:focus{outline:2px solid #6aa4ce;outline-offset:1px}
+
+/* Modo escuro aplicado de forma consistente em todas as telas internas. */
+:root[data-theme="dark"]{color-scheme:dark;background:#111b27;color:#e5edf5}
+:root[data-theme="dark"] body{background:#111b27;color:#e5edf5}
+:root[data-theme="dark"] .sidebar,:root[data-theme="dark"] .panel,:root[data-theme="dark"] .stat-card,:root[data-theme="dark"] .user-chip{background:#1a2939;border-color:#2b4055;color:#d4e0eb}
+:root[data-theme="dark"] .menu a{color:#a9bbcc}
+:root[data-theme="dark"] .menu a:hover,:root[data-theme="dark"] .menu a.active{background:#263c52;color:#9ed2f4}
+:root[data-theme="dark"] .appearance-picker{background:#172536;border-color:#2b4055}
+:root[data-theme="dark"] .appearance-picker label{color:#c0cedb}
+:root[data-theme="dark"] .appearance-picker select,:root[data-theme="dark"] .form-grid input,:root[data-theme="dark"] .form-grid select,:root[data-theme="dark"] .form-grid textarea{background:#111d2a;border-color:#3a5066;color:#e5edf5}
+:root[data-theme="dark"] .topbar h1,:root[data-theme="dark"] .section-head h2{color:#e5edf5}
+:root[data-theme="dark"] .eyebrow,:root[data-theme="dark"] .muted,:root[data-theme="dark"] .stat-card span,:root[data-theme="dark"] .stat-card small{color:#9db0c2}
+:root[data-theme="dark"] th{background:#223449;color:#b8cadd}
+:root[data-theme="dark"] td{color:#d0dce7;border-color:#2b4055}
+:root[data-theme="dark"] tbody tr:hover{background:#203247}
+:root[data-theme="dark"] .button-quiet{background:#26384b;color:#d3e0ec}
+:root[data-theme="dark"] .button-outline{background:#1a2939;border-color:#40566b;color:#b9d9ef}
+:root[data-theme="dark"] .button-danger{background:#482b30;border-color:#744047;color:#ffb8b3}
+:root[data-theme="dark"] .empty{color:#93a6b8}
+:root[data-theme="dark"] .text-link{color:#8fc9ef}
+:root[data-theme="dark"] .form-grid label{color:#bdccda}
+:root[data-theme="dark"] .form-grid input:focus,:root[data-theme="dark"] .form-grid select:focus,:root[data-theme="dark"] .form-grid textarea:focus{border-color:#6aa4ce;box-shadow:0 0 0 3px #6aa4ce2b}
+:root[data-theme="dark"] .welcome{background:linear-gradient(120deg,#123b5d,#205e87)}
+:root[data-theme="dark"] .brand-mark{background:transparent}
+:root[data-theme="dark"] .table-wrap td .button{margin:2px 6px 2px 0}
+
+@media(max-width:850px){.appearance-picker{min-width:180px;max-width:240px;margin:8px 0}.side-bottom{display:flex;flex-wrap:wrap;gap:8px}.side-bottom .button{width:auto;flex:1 1 160px}}
+@media(max-width:560px){.appearance-picker{max-width:none;width:100%}.side-bottom{display:grid}.side-bottom .button{width:100%}}
