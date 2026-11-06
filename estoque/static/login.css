@@ -232,7 +232,7 @@ input[aria-invalid="true"] {
 /* A marca SVG é inline para adaptar as cores ao tema do login. */
 .marca-logo{display:block;width:min(100%,18rem);height:auto;margin:0 auto 1rem;background:transparent;border-radius:0}
 .marca-logo svg{display:block;width:100%;height:auto;--logo-cap:var(--color-4);--logo-text:var(--color-5);--logo-heart:#ed101b;--logo-outline:var(--texto);--logo-letter-outline:var(--cartao);--logo-stitch:var(--color-5)}
-@media(prefers-color-scheme:dark){.marca-logo svg{--logo-cap:#38bdf8;--logo-text:#f8fafc;--logo-heart:#fb7185;--logo-outline:#dbe7f0;--logo-letter-outline:#192b3b;--logo-stitch:#075985}}
+
 
 /* Ícones alinhados aos rótulos e ao botão de login. */
 label .material-symbols-outlined,.rotulo .material-symbols-outlined{display:inline-flex;align-items:center;vertical-align:middle;line-height:1;margin-right:7px}
