@@ -2,17 +2,17 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel, ConfigDict, Field
-from sqlalchemy import select
+from sqlalchemy import delete, func, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.core.deps import get_db, get_usuario_atual
+from app.core.deps import get_admin_atual, get_db, get_usuario_atual
 from app.models.item import Item
 from app.models.movimentacao import Movimentacao
 from app.models.usuario import Usuario
-from app.services.estoque import (
+from app.services.auditoria import ip_do_cliente, registrar\nfrom app.services.estoque import (
     ConflitoEstoque,
     ItemNaoEncontrado,
     registrar_movimentacao,
