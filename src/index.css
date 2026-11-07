@@ -39,6 +39,7 @@ img { display: block; max-width: 100%; }
 .brand { display: inline-flex; align-items: center; gap: 11px; color: #123a70; min-width: max-content; }
 .brand-mobile-home-icon { display: none; }
 .brand-mobile-home-icon img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.brand-footer-logo { width: 64px; height: 64px; object-fit: contain; }
 .brand-compact { display: inline-flex; align-items: center; gap: 11px; }
 .brand-wide-logo { display: none; width: 100px; height: 74px; object-fit: contain; }
 .brand-mark { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px; background: #e9f2ff; }
@@ -137,6 +138,8 @@ img { display: block; max-width: 100%; }
   .mobile-nav a.active { color: #123a70; background: #eef5fd; }
   .mobile-nav .nav-login { margin-top: 4px; color: white; background: #123a70; text-align: center; }
   .mobile-nav .nav-login:hover { color: white; background: #0e2c55; }
+  .site-header .brand-mobile-home-icon { display: grid; width: 42px; height: 42px; place-items: center; }
+  .site-header .brand-compact { display: none; }
   .home-hero, .hero-inner { min-height: 540px; }
   .home-hero::before { background: linear-gradient(90deg, rgba(16,47,91,.96), rgba(18,58,112,.84)), url('/images/foto-criancas.jpg') center/cover; }
   .action-grid { grid-template-columns: repeat(2, 1fr); }
@@ -151,8 +154,6 @@ img { display: block; max-width: 100%; }
   .header-inner { height: 72px; }
   .brand-mark { width: 40px; height: 40px; }
   .brand-name { font-size: 13px; }
-  .site-header .brand-mobile-home-icon { display: grid; width: 42px; height: 42px; place-items: center; }
-  .site-header .brand-compact { display: none; }
   .footer-grid, .intro-grid { grid-template-columns: 1fr; }
   .footer-grid { gap: 29px; }
   .footer-inner { padding-top: 42px; }

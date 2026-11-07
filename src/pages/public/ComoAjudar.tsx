@@ -79,7 +79,7 @@ export default function ComoAjudar() {
               Precisamos de voluntários para distribuição de alimentos, organização de campanhas, reforço escolar, comunicação e muito mais.
             </p>
             <a
-              href="https://forms.google.com"
+              href="https://docs.google.com/forms/u/1/d/1WbA13ruq9JkZh2jduoK-p6zb_g1t88yHFmCLNTznrCA/viewform?edit_requested=true"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-[#1a3a6e] text-white font-bold px-8 py-3 rounded-md hover:bg-[#0f1f3d] transition-colors inline-block"
