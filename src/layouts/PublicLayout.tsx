@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import type { MouseEvent } from "react"
 import { Outlet, Link, NavLink, useLocation } from "react-router"
 import Logo from "../components/Logo"
+import Icon from "../components/Icon"
 
 const navLinks = [
   { to: "/", label: "Início" },
@@ -117,7 +118,7 @@ export default function PublicLayout() {
             aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
             aria-expanded={menuOpen}
           >
-            {menuOpen ? "✕" : "☰"}
+            <Icon name={menuOpen ? "close" : "menu"} size={22} />
           </button>
         </div>
         {menuOpen && (
