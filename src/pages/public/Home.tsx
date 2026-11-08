@@ -1,11 +1,12 @@
 import { Link } from 'react-router';
+import Icon from '../../components/Icon';
 
 const acoes = [
-  { icon: '🍱', titulo: 'Quentinhas', desc: 'Refeições preparadas com escuta, respeito e presença.' },
-  { icon: '🛒', titulo: 'Cestas básicas', desc: 'Alimentos essenciais para famílias em vulnerabilidade.' },
-  { icon: '🧴', titulo: 'Kits de higiene', desc: 'Cuidado que começa pelos itens mais cotidianos.' },
-  { icon: '📚', titulo: 'Amigos da Escola', desc: 'Apoio à alfabetização e às trajetórias de crianças.' },
-];
+  { icon: 'restaurant', titulo: 'Quentinhas', desc: 'Refeições preparadas com escuta, respeito e presença.' },
+  { icon: 'shopping_cart', titulo: 'Cestas básicas', desc: 'Alimentos essenciais para famílias em vulnerabilidade.' },
+  { icon: 'sanitizer', titulo: 'Kits de higiene', desc: 'Cuidado que começa pelos itens mais cotidianos.' },
+  { icon: 'school', titulo: 'Amigos da Escola', desc: 'Apoio à alfabetização e às trajetórias de crianças.' },
+] as const;
 const valores = ['Humanização', 'Geração de Renda', 'Cidadania', 'Vínculo Familiar', 'Direito à Moradia Digna', 'Acesso à Saúde', 'Segurança Alimentar', 'Conscientização', 'Direito à Educação'];
 
 export default function Home() {
@@ -24,7 +25,7 @@ export default function Home() {
     </div></section>
     <section className="actions-section"><div className="site-container">
       <div className="section-heading"><div><p className="section-kicker">Onde a ajuda acontece</p><h2 className="section-title">Ações que chegam perto de quem precisa.</h2></div><Link className="text-link" to="/nossas-acoes">Ver todas as ações →</Link></div>
-      <div className="action-grid">{acoes.map((acao) => <article className="action-card" key={acao.titulo}><div className="action-icon" aria-hidden="true">{acao.icon}</div><h3>{acao.titulo}</h3><p>{acao.desc}</p></article>)}</div>
+      <div className="action-grid">{acoes.map((acao) => <article className="action-card" key={acao.titulo}><div className="action-icon"><Icon name={acao.icon} size={24} /></div><h3>{acao.titulo}</h3><p>{acao.desc}</p></article>)}</div>
     </div></section>
     <section className="values-section"><div className="site-container"><p className="section-kicker">Nossa mandala social</p><h2 className="section-title">Nove valores. Uma mesma direção.</h2><p className="section-text" style={{ maxWidth: 620 }}>Cada decisão é orientada por valores que reconhecem as pessoas por inteiro — suas necessidades, histórias e potências.</p><div className="values-grid">{valores.map((valor, index) => <div className="value-pill" key={valor}><span className="value-number">{index + 1}</span>{valor}</div>)}</div></div></section>
     <section className="community-cta"><div className="site-container cta-box"><div><p className="eyebrow">Uma comunidade mais forte começa aqui</p><h2 className="section-title">O seu gesto pode abrir espaço para novos começos.</h2><p className="section-text">Doe, seja voluntário ou aproxime a sua organização. Há muitas formas de caminhar com a gente.</p></div><Link to="/como-ajudar" className="button-primary">Quero fazer parte</Link></div></section>

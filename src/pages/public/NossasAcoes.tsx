@@ -1,3 +1,4 @@
+import Icon from '../../components/Icon';
 import fotoArrecadacaoRoupa from '@/imports/Foto_arrecadacao_roupa.jpg';
 import fotoBalaoAmigos from '@/imports/Foto_balao_amigos_do_ze_alguem.jpg';
 import fotoCestaBasica from '@/imports/Foto_cesta_basica-1.jpg';
@@ -5,7 +6,7 @@ import fotoDosParticipantes from '@/imports/Foto_dos_participantes.jpg';
 
 const acoes = [
   {
-    icon: '🍱',
+    icon: 'restaurant',
     titulo: 'Distribuição de Quentinhas',
     publico: 'Pessoas em situação de rua',
     desc: 'Toda semana preparamos e distribuímos refeições quentes para pessoas em situação de rua. A quentinha vai além do alimento — é um gesto de humanidade e presença.',
@@ -13,7 +14,7 @@ const acoes = [
     alt: 'Quentinhas preparadas para distribuição',
   },
   {
-    icon: '🛒',
+    icon: 'shopping_cart',
     titulo: 'Cestas Básicas',
     publico: 'Famílias em vulnerabilidade',
     desc: 'Entregamos cestas com alimentos essenciais para famílias cadastradas que enfrentam dificuldades. Cada cesta é montada com cuidado para atender as necessidades nutricionais básicas.',
@@ -21,7 +22,7 @@ const acoes = [
     alt: 'Voluntários dos Amigos do Zé Alguém diante de cestas básicas prontas para entrega',
   },
   {
-    icon: '🧴',
+    icon: 'sanitizer',
     titulo: 'Kits de Higiene',
     publico: 'Pessoas em situação de vulnerabilidade',
     desc: 'Distribuímos kits com produtos de higiene pessoal — sabonete, shampoo, pasta de dente, absorvente e outros itens essenciais que muitas vezes não são cobertos por doações de alimentos.',
@@ -29,7 +30,7 @@ const acoes = [
     alt: 'Moradores e voluntários reunidos em uma ação comunitária',
   },
   {
-    icon: '👕',
+    icon: 'checkroom',
     titulo: 'Campanhas de Roupas',
     publico: 'Comunidade em geral',
     desc: 'Realizamos campanhas de arrecadação de roupas, calçados e agasalhos, distribuindo-os para famílias e pessoas que precisam. Especialmente ativa no inverno, a campanha acolhe doações de toda a cidade.',
@@ -37,14 +38,14 @@ const acoes = [
     alt: 'Kits de roupas arrecadados para doação',
   },
   {
-    icon: '📚',
+    icon: 'school',
     titulo: 'Amigos da Escola',
     publico: 'Crianças e adolescentes',
     desc: 'O projeto Amigos da Escola oferece reforço escolar, apoio à alfabetização e atividades educativas para crianças de comunidades vulneráveis. Acreditamos que a educação é o caminho mais duradouro para a transformação social.',
     img: fotoBalaoAmigos,
     alt: 'Criança segura um balão dos Amigos do Zé Alguém durante uma ação',
   },
-];
+] as const;
 
 export default function NossasAcoes() {
   return (
@@ -68,7 +69,7 @@ export default function NossasAcoes() {
               style={{ direction: i % 2 === 1 ? 'rtl' : 'ltr' }}
             >
               <div style={{ direction: 'ltr' }}>
-                <div className="text-4xl mb-4">{a.icon}</div>
+                <div className="text-4xl mb-4 text-[#1a3a6e]"><Icon name={a.icon} size={36} /></div>
                 <span className="inline-block bg-[#ddeeff] text-[#1a3a6e] text-xs font-semibold px-3 py-1 rounded-full mb-3">
                   {a.publico}
                 </span>
