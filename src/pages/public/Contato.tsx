@@ -56,7 +56,7 @@ export default function Contato() {
                 {[
                   { label: 'Instagram', icon: 'instagram', href: 'https://www.instagram.com/amigosdozealguem/', external: true },
                   { label: 'Facebook', icon: 'facebook', href: 'https://www.facebook.com/AmigosDoZeAlguem', external: true },
-                ].map(({ label, icon, href, external }) => (
+                ] as const).map(({ label, icon, href, external }) => (
                   <a
                     key={label}
                     href={href}
