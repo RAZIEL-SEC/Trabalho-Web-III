@@ -26,11 +26,11 @@ export default function ComoAjudar() {
               <h3 className="font-bold text-[#1a3a6e] mb-2">Itens mais necessários</h3>
               <ul className="text-sm text-[#4a6080] space-y-1">
                 <li><Icon name="check_circle" size={16} className="mr-2 align-middle text-[#2372ba]" />Arroz, feijão, macarrão, óleo</li>
-                <li>✔ Leite, açúcar, farinha</li>
-                <li>✔ Sabonete, shampoo, pasta de dente</li>
-                <li>✔ Absorventes, fraldas</li>
-                <li>✔ Roupas limpas e em bom estado</li>
-                <li>✔ Material escolar</li>
+                <li><Icon name="check_circle" size={16} className="mr-2 align-middle text-[#2372ba]" />Leite, açúcar, farinha</li>
+                <li><Icon name="check_circle" size={16} className="mr-2 align-middle text-[#2372ba]" />Sabonete, shampoo, pasta de dente</li>
+                <li><Icon name="check_circle" size={16} className="mr-2 align-middle text-[#2372ba]" />Absorventes, fraldas</li>
+                <li><Icon name="check_circle" size={16} className="mr-2 align-middle text-[#2372ba]" />Roupas limpas e em bom estado</li>
+                <li><Icon name="check_circle" size={16} className="mr-2 align-middle text-[#2372ba]" />Material escolar</li>
               </ul>
             </div>
             <p className="text-sm text-[#4a6080]">
