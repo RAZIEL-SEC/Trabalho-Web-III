@@ -45,7 +45,7 @@ const acoes = [
     img: fotoBalaoAmigos,
     alt: 'Criança segura um balão dos Amigos do Zé Alguém durante uma ação',
   },
-];
+] as const;
 
 export default function NossasAcoes() {
   return (
