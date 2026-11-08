@@ -7,7 +7,7 @@ const navItems = [
   { to: '/admin/dashboard', label: 'Painel', icon: 'dashboard', end: true },
   { to: '/admin/dashboard/movimentacoes', label: 'Movimentações', icon: 'swap_horiz', end: false },
   { to: '/admin/dashboard/registrar', label: 'Registrar', icon: 'add', end: false },
-];
+] as const;
 
 function AdminBrand() {
   return <Link to="/" className="admin-brand"><span className="brand-mark"><Logo size={32} /></span><span className="brand-name">Amigos do<br />Zé Alguém</span></Link>;
