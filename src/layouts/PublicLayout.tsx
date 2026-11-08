@@ -106,9 +106,9 @@ export default function PublicLayout() {
                 {label}
               </NavLink>
             ))}
-            <Link to="/admin" className="nav-login">
+            <a href="https://amigosdozealguem.duckdns.org/estoque/login.html" className="nav-login">
               Entrar
-            </Link>
+            </a>
           </nav>
           <button
             className="menu-trigger"
@@ -133,13 +133,13 @@ export default function PublicLayout() {
                 {label}
               </NavLink>
             ))}
-            <Link
-              to="/admin"
+            <a
+              href="https://amigosdozealguem.duckdns.org/estoque/login.html"
               className="nav-login"
               onClick={() => setMenuOpen(false)}
             >
               Entrar
-            </Link>
+            </a>
           </nav>
         )}
       </header>
