@@ -6,7 +6,7 @@ const acoes = [
   { icon: 'shopping_cart', titulo: 'Cestas básicas', desc: 'Alimentos essenciais para famílias em vulnerabilidade.' },
   { icon: 'sanitizer', titulo: 'Kits de higiene', desc: 'Cuidado que começa pelos itens mais cotidianos.' },
   { icon: 'school', titulo: 'Amigos da Escola', desc: 'Apoio à alfabetização e às trajetórias de crianças.' },
-];
+] as const;
 const valores = ['Humanização', 'Geração de Renda', 'Cidadania', 'Vínculo Familiar', 'Direito à Moradia Digna', 'Acesso à Saúde', 'Segurança Alimentar', 'Conscientização', 'Direito à Educação'];
 
 export default function Home() {
