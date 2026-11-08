@@ -1,5 +1,4 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "trabalho-web-iii",
   "compatibility_date": "2026-11-08",
   "assets": {
