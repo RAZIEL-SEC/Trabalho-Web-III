@@ -6,7 +6,7 @@ type IconName =
   | 'smartphone' | 'location_on' | 'close' | 'menu'
   | 'dashboard' | 'swap_horiz' | 'add' | 'waving_hand'
   | 'search' | 'error' | 'target' | 'star' | 'arrow_forward'
-  | 'check_circle' | 'inventory_2' | 'favorite';
+  | 'check_circle' | 'inventory_2' | 'favorite' | 'checkroom';
 
 interface IconProps {
   name: IconName | 'instagram' | 'facebook';
