@@ -23,7 +23,7 @@ async function excluir(item,botao){
   if(!ok)return;
   botao.disabled=true;
   try{
-    const r=await fetch(`/itens/${item.id}`,{method:"DELETE"});
+    const r=await apiFetch(`/itens/${item.id}`,{method:"DELETE"});
     const d=await r.json().catch(()=>({}));
     if(r.status===401){location.href="login.html";return}
     if(!r.ok)throw Error(typeof d.detail==="string"?d.detail:"Não foi possível excluir o item.");
@@ -34,7 +34,7 @@ async function excluir(item,botao){
 form.addEventListener("submit",async e=>{
   e.preventDefault();const b=form.querySelector('button[type="submit"]');b.disabled=true;
   try{
-    const r=await fetch("/itens",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.fromEntries(new FormData(form)))});
+    const r=await apiFetch("/itens",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.fromEntries(new FormData(form)))});
     const d=await r.json().catch(()=>({}));
     if(r.status===401){location.href="login.html";return}
     if(!r.ok)throw Error(typeof d.detail==="string"?d.detail:"Confira os dados informados.");
