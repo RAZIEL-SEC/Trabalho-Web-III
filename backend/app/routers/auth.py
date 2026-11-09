@@ -83,7 +83,7 @@ def login(
     return usuario
 
 
-@router.post("/logout", status_code=204, dependencies=[Depends(limitar_api)])
+@router.post("/logout", status_code=204, dependencies=[Depends(limitar_por_ip)])
 def logout(response: Response):
     response.delete_cookie(COOKIE_NOME, path="/")
 
