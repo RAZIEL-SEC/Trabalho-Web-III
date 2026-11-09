@@ -353,3 +353,57 @@ def test_listar_historico_respeita_limite_e_offset(
     assert len(primeira.json()) == 2
     assert len(segunda.json()) == 1
     assert primeira.json()[0]["id"] != segunda.json()[0]["id"]
+
+
+def test_chave_idempotencia_impede_movimentacao_duplicada(
+    client_autenticado: TestClient, db: Session, item_id: int
+):
+    from uuid import uuid4
+
+    chave = str(uuid4())
+    dados = {"item_id": item_id, "tipo": "entrada", "quantidade": "5.00"}
+    primeira = client_autenticado.post(
+        "/movimentacoes", json=dados, headers={"Idempotency-Key": chave}
+    )
+    repetida = client_autenticado.post(
+        "/movimentacoes", json=dados, headers={"Idempotency-Key": chave}
+    )
+
+    assert primeira.status_code == repetida.status_code == 201
+    assert primeira.json() == repetida.json()
+    verificar_estado(db, item_id, "5.00", 1)
+
+
+def test_chave_idempotencia_nao_pode_ser_reutilizada_com_outro_corpo(
+    client_autenticado: TestClient, db: Session, item_id: int
+):
+    from uuid import uuid4
+
+    chave = str(uuid4())
+    primeira = client_autenticado.post(
+        "/movimentacoes",
+        json={"item_id": item_id, "tipo": "entrada", "quantidade": "5.00"},
+        headers={"Idempotency-Key": chave},
+    )
+    conflito = client_autenticado.post(
+        "/movimentacoes",
+        json={"item_id": item_id, "tipo": "entrada", "quantidade": "8.00"},
+        headers={"Idempotency-Key": chave},
+    )
+
+    assert primeira.status_code == 201
+    assert conflito.status_code == 409
+    assert conflito.json()["detail"] == (
+        "Esta chave de idempotência já foi usada com outros dados."
+    )
+    verificar_estado(db, item_id, "5.00", 1)
+
+
+def test_movimentacao_exige_chave_de_idempotencia(
+    client: TestClient, item_id: int
+):
+    response = client.post(
+        "/movimentacoes",
+        json={"item_id": item_id, "tipo": "entrada", "quantidade": "1.00"},
+    )
+    assert response.status_code == 422
