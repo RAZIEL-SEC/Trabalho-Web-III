@@ -11,8 +11,9 @@ from sqlalchemy.orm import Session
 from app.core.deps import get_db, get_usuario_atual
 from app.models.item import Item
 from app.models.usuario import Usuario
+from app.services.protecao_api import limitar_api
 
-router = APIRouter(prefix="/itens", tags=["itens"])
+router = APIRouter(prefix="/itens", tags=["itens"], dependencies=[Depends(limitar_api)])
 
 
 class ItemIn(BaseModel):
