@@ -19,7 +19,7 @@ from app.main import app
 from app.models.item import Item
 from app.models.movimentacao import Movimentacao
 from app.models.usuario import Usuario
-from tests.http_client import IdempotentTestClient
+from .http_client import IdempotentTestClient
 
 
 @pytest.fixture
