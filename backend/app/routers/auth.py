@@ -16,7 +16,7 @@ from app.core.security import (
 )
 from app.models.usuario import Usuario
 from app.services.auditoria import ip_do_cliente, registrar
-from app.services.sessoes import invalidar_sessoes
+from app.services.sessoes import invalidar_sessoes\nfrom app.services.protecao_api import limitar_api, limitar_por_ip
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -52,7 +52,7 @@ def _checar_limite(chave: str) -> None:
         raise HTTPException(429, "Muitas tentativas. Aguarde alguns minutos.")
 
 
-@router.post("/login", response_model=UsuarioOut)
+@router.post("/login", response_model=UsuarioOut, dependencies=[Depends(limitar_por_ip)])
 def login(
     dados: LoginIn,
     request: Request,
@@ -82,17 +82,17 @@ def login(
     return usuario
 
 
-@router.post("/logout", status_code=204)
+@router.post("/logout", status_code=204, dependencies=[Depends(limitar_api)])
 def logout(response: Response):
     response.delete_cookie(COOKIE_NOME, path="/")
 
 
-@router.get("/eu", response_model=UsuarioOut)
+@router.get("/eu", response_model=UsuarioOut, dependencies=[Depends(limitar_api)])
 def eu(usuario: Usuario = Depends(get_usuario_atual)):
     return usuario
 
 
-@router.post("/trocar-senha", status_code=204)
+@router.post("/trocar-senha", status_code=204, dependencies=[Depends(limitar_api)])
 def trocar_senha(
     dados: TrocarSenhaIn,
     request: Request,
@@ -113,7 +113,7 @@ def trocar_senha(
     definir_cookie(response, usuario.id, usuario.token_versao)
 
 
-@router.post("/sair-de-todos", status_code=204)
+@router.post("/sair-de-todos", status_code=204, dependencies=[Depends(limitar_api)])
 def sair_de_todos(
     request: Request,
     response: Response,
