@@ -53,7 +53,7 @@ para dados fora do contrato e `429` após cinco falhas por IP e e-mail na janela
 de dez minutos. Credenciais inválidas usam a mensagem
 `{"detail": "E-mail ou senha incorretos"}`.
 
-## Cadastrar item
+## Limitação de requisições\n\nAs rotas de itens e movimentações aplicam limites por usuário e por IP,\ncompartilhados entre processos por meio do PostgreSQL. Os padrões são 100\nrequisições por minuto por usuário e 300 por minuto por IP. Os valores podem\nser ajustados por `API_RATE_LIMIT_USER_PER_MINUTE` e\n`API_RATE_LIMIT_IP_PER_MINUTE`. Ao exceder o limite, a API responde `429`\ncom `Retry-After: 60`.\n\n## Cadastrar item
 
 ```http
 POST /itens
@@ -186,7 +186,7 @@ Cookie: access_token=<cookie-recebido-no-login>
 | `item_id` | inteiro JSON | Obrigatório, de `1` a `2147483647`; deve referenciar um item ativo. Strings, booleanos e números fracionários são recusados. |
 | `tipo` | string | Obrigatório: somente `entrada` ou `saida`, exatamente nessa grafia. |
 | `quantidade` | string decimal ou número JSON | Obrigatória, positiva, até `99999999.99`, com no máximo duas casas decimais após desconsiderar zeros finais. Recomenda-se enviar string para preservar a precisão. |
-| `observacao` | string ou `null` | Opcional, padrão `null`; até 1000 caracteres após remover espaços das extremidades. |
+| `observacao` | string ou `null` | Opcional, padrão `null`; até 1000 caracteres após remover espaços das extremidades. |\n\nO header `Idempotency-Key` é obrigatório e deve conter um UUID. A chave é\núnica por usuário. Repetir a mesma chave com o mesmo corpo retorna a resposta\noriginal sem criar outra movimentação. Reutilizar a chave com outro corpo\nretorna `409 Conflict`. O registro da chave e a movimentação são confirmados\nna mesma transação PostgreSQL.
 
 Casas decimais adicionais contendo apenas zeros são aceitas: `"2.3500"`
 equivale a `"2.35"`. Quantidade zero, negativa, não numérica, infinita,
