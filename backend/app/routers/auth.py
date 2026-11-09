@@ -16,7 +16,8 @@ from app.core.security import (
 )
 from app.models.usuario import Usuario
 from app.services.auditoria import ip_do_cliente, registrar
-from app.services.sessoes import invalidar_sessoes\nfrom app.services.protecao_api import limitar_api, limitar_por_ip
+from app.services.sessoes import invalidar_sessoes
+from app.services.protecao_api import limitar_api, limitar_por_ip
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
