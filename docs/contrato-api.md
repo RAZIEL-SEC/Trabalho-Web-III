@@ -199,8 +199,10 @@ Cookie: access_token=<cookie-recebido-no-login>
 | `observacao` | string ou `null` | Opcional, padrão `null`; até 1000 caracteres após remover espaços das extremidades. |
 
 O header `Idempotency-Key` é obrigatório e deve conter um UUID. A chave é
-única por usuário. Repetir a mesma chave com o mesmo corpo retorna a resposta
-original sem criar outra movimentação. Reutilizar a chave com outro corpo
+única por usuário. O frontend mantém a chave e o corpo pendente em sessionStorage
+para permitir repetir a mesma operação após uma falha de rede ou recarregamento
+da página. Repetir a mesma chave com o mesmo corpo retorna a resposta original
+sem criar outra movimentação. Reutilizar a chave com outro corpo
 retorna `409 Conflict`. O registro da chave e a movimentação são confirmados
 na mesma transação PostgreSQL.
 
@@ -231,10 +233,11 @@ Resposta `201 Created`, partindo de um item com saldo zero:
 Para registrar uma saída desse item:
 
 ```javascript
+const idempotencyKey = crypto.randomUUID(); // reutilize esta chave se precisar reenviar a mesma operação
 const resposta = await fetch("/movimentacoes", {
   method: "POST",
   credentials: "include",
-  headers: { "Content-Type": "application/json", "Idempotency-Key": crypto.randomUUID() },
+  headers: { "Content-Type": "application/json", "Idempotency-Key": idempotencyKey },
   body: JSON.stringify({
     item_id: 12,
     tipo: "saida",
