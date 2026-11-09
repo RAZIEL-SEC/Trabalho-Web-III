@@ -11,9 +11,9 @@ from app.core.deps import get_admin_atual, get_db
 from app.core.security import gerar_hash
 from app.models.usuario import Usuario
 from app.services.auditoria import ip_do_cliente, registrar
-from app.services.sessoes import invalidar_sessoes
+from app.services.sessoes import invalidar_sessoes\nfrom app.services.protecao_api import limitar_api
 
-router = APIRouter(prefix="/usuarios", tags=["usuarios"])
+router = APIRouter(\n    prefix="/usuarios", tags=["usuarios"], dependencies=[Depends(limitar_api)]\n)
 
 Perfil = Literal["admin", "operador"]
 EMAIL_RE = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
