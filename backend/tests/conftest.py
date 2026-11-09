@@ -14,6 +14,7 @@ from app.core.security import gerar_hash
 from app.db.session import engine
 from app.main import app
 from app.models.usuario import Usuario
+from http_client import IdempotentTestClient
 
 
 @pytest.fixture(scope="session")
@@ -80,7 +81,7 @@ def client(db: Session) -> Iterator[TestClient]:
     app.dependency_overrides[get_db] = get_db_teste
     try:
         # HTTPS permite testar também quando COOKIE_SECURE está habilitado.
-        with TestClient(app, base_url="https://testserver") as test_client:
+        with IdempotentTestClient(app, base_url="https://testserver") as test_client:
             yield test_client
     finally:
         app.dependency_overrides.clear()
