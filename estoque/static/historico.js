@@ -64,7 +64,7 @@ async function limparHistorico() {
   msg.textContent = "Limpando histórico…";
   msg.className = "feedback";
   try {
-    const resposta = await fetch("/movimentacoes/historico", { method: "DELETE" });
+    const resposta = await apiFetch("/movimentacoes/historico", { method: "DELETE" });
     if (resposta.status === 401) {
       location.href = "login.html";
       return;
