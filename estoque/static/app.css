@@ -88,10 +88,6 @@
   navigation: auto;
 }
 
-:root {
-  view-transition-name: none;
-}
-
 .layout {
   view-transition-name: estoque-layout;
 }
