@@ -49,3 +49,12 @@ vírgulas de origens HTTPS exatas (incluindo porta quando aplicável), por exemp
 `https://painel.exemplo.com`. Não use curingas nem inclua domínios que não
 controla. A lista deve refletir a origem real do navegador, não o endereço
 interno do container.
+
+
+**Importante:** a allowlist de CSRF não altera a política do cookie de sessão
+(`SameSite=Strict`). Uma origem em outro subdomínio do mesmo site pode ser
+autorizada após validação, mas um frontend em outro site/domínio não passará a
+compartilhar a sessão apenas por entrar na allowlist. Nesse cenário, prefira
+servir painel e API sob a mesma origem (ou ao menos o mesmo site); não altere
+`SameSite` para `None` sem projetar também CORS com credenciais e revisar o
+modelo de cookies.
