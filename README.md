@@ -34,3 +34,18 @@ A API deve ficar acessível somente pelo proxy reverso. O proxy deve sobrescreve
 `X-Forwarded-For`; o backend usa o primeiro endereço válido desse cabeçalho
 para aplicar o limite por IP. Não exponha a porta da API diretamente à internet.
 Em produção, configure `APP_ENV=production` e `COOKIE_SECURE=true`.
+
+
+## Proteção CSRF
+
+As requisições que alteram estado exigem uma origem válida em `Origin` ou,
+na ausência desse cabeçalho, em `Referer`. Para sessões autenticadas, também
+é obrigatório enviar o cabeçalho `X-CSRF-Token`, obtido em `GET /auth/csrf`.
+O frontend do painel já faz essa obtenção automaticamente.
+
+Por padrão, somente a mesma origem da API é aceita. Se o frontend for servido
+por outra origem, configure `CSRF_TRUSTED_ORIGINS` com uma lista separada por
+vírgulas de origens HTTPS exatas (incluindo porta quando aplicável), por exemplo:
+`https://painel.exemplo.com`. Não use curingas nem inclua domínios que não
+controla. A lista deve refletir a origem real do navegador, não o endereço
+interno do container.
