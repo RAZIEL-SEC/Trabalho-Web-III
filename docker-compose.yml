@@ -23,6 +23,7 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://estoque:${DB_PASSWORD}@db:5432/estoque
       SECRET_KEY: ${SECRET_KEY:?SECRET_KEY ausente}
+      APP_ENV: production
       ACCESS_TOKEN_MINUTES: "15"
       COOKIE_SECURE: "true"
     depends_on:

@@ -84,3 +84,25 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER trg_auditoria_imutavel
     BEFORE UPDATE OR DELETE ON auditoria
     FOR EACH ROW EXECUTE FUNCTION auditoria_imutavel();
+
+
+-- Chaves de idempotência: uma operação de estoque por usuário/chave.
+CREATE TABLE idempotency_keys (
+    id              BIGSERIAL PRIMARY KEY,
+    usuario_id      INTEGER NOT NULL,
+    idempotency_key UUID NOT NULL,
+    request_hash    CHAR(64) NOT NULL,
+    response_body   JSONB,
+    criado_em       TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CONSTRAINT uq_idempotency_usuario_key UNIQUE (usuario_id, idempotency_key)
+);
+
+CREATE INDEX idx_idempotency_criado_em
+    ON idempotency_keys (criado_em);
+
+-- Contadores compartilhados entre workers para rate limiting por usuário/IP.
+CREATE TABLE rate_limit_counters (
+    bucket_key      VARCHAR(80) PRIMARY KEY,
+    window_start    TIMESTAMPTZ NOT NULL,
+    request_count   INTEGER NOT NULL CHECK (request_count > 0)
+);

@@ -1,8 +1,11 @@
+import hashlib
+import json
 from datetime import datetime
 from decimal import Decimal
 from typing import Literal
+from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, status
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, select, text
 from sqlalchemy.exc import SQLAlchemyError
@@ -18,8 +21,13 @@ from app.services.estoque import (
     ItemNaoEncontrado,
     registrar_movimentacao,
 )
+from app.services.protecao_api import limitar_api
 
-router = APIRouter(prefix="/movimentacoes", tags=["movimentacoes"])
+router = APIRouter(
+    prefix="/movimentacoes",
+    tags=["movimentacoes"],
+    dependencies=[Depends(limitar_api)],
+)
 
 
 class MovimentacaoIn(BaseModel):
@@ -51,8 +59,64 @@ def cadastrar_movimentacao(
     dados: MovimentacaoIn,
     db: Session = Depends(get_db),
     usuario: Usuario = Depends(get_usuario_atual),
+    idempotency_key: UUID = Header(alias="Idempotency-Key"),
 ) -> MovimentacaoOut:
+    chave = idempotency_key
+    corpo_canonico = json.dumps(
+        {
+            "item_id": dados.item_id,
+            "tipo": dados.tipo,
+            "quantidade": format(dados.quantidade.quantize(Decimal("0.01")), "f"),
+            "observacao": dados.observacao,
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    request_hash = hashlib.sha256(corpo_canonico.encode("utf-8")).hexdigest()
+
     try:
+        # A reserva da chave e a movimentação pertencem à mesma transação.
+        # Uma segunda requisição com a mesma chave aguarda o primeiro commit.
+        inserida = db.execute(
+            text("""
+                INSERT INTO idempotency_keys
+                    (usuario_id, idempotency_key, request_hash)
+                VALUES (:usuario_id, :idempotency_key, :request_hash)
+                ON CONFLICT (usuario_id, idempotency_key) DO NOTHING
+                RETURNING id
+            """),
+            {
+                "usuario_id": usuario.id,
+                "idempotency_key": chave,
+                "request_hash": request_hash,
+            },
+        ).scalar_one_or_none()
+
+        if inserida is None:
+            existente = db.execute(
+                text("""
+                    SELECT request_hash, response_body
+                    FROM idempotency_keys
+                    WHERE usuario_id = :usuario_id
+                      AND idempotency_key = :idempotency_key
+                """),
+                {"usuario_id": usuario.id, "idempotency_key": chave},
+            ).mappings().one()
+
+            if existente["request_hash"].strip() != request_hash:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Esta chave de idempotência já foi usada com outros dados.",
+                )
+            if existente["response_body"] is None:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="A requisição com esta chave ainda está sendo processada.",
+                    headers={"Retry-After": "1"},
+                )
+            return MovimentacaoOut.model_validate(existente["response_body"])
+
         movimentacao, saldo_atual = registrar_movimentacao(
             db,
             item_id=dados.item_id,
@@ -61,8 +125,6 @@ def cadastrar_movimentacao(
             observacao=dados.observacao,
             usuario_id=usuario.id,
         )
-        # Captura a resposta enquanto o bloqueio ainda está ativo, evitando
-        # reler um saldo já modificado por outra requisição após o commit.
         resposta = MovimentacaoOut(
             id=movimentacao.id,
             item_id=movimentacao.item_id,
@@ -73,7 +135,23 @@ def cadastrar_movimentacao(
             criado_em=movimentacao.criado_em,
             saldo_atual=saldo_atual,
         )
+        db.execute(
+            text("""
+                UPDATE idempotency_keys
+                SET response_body = CAST(:response_body AS jsonb)
+                WHERE usuario_id = :usuario_id
+                  AND idempotency_key = :idempotency_key
+            """),
+            {
+                "response_body": json.dumps(resposta.model_dump(mode="json")),
+                "usuario_id": usuario.id,
+                "idempotency_key": chave,
+            },
+        )
         db.commit()
+    except HTTPException:
+        db.rollback()
+        raise
     except ItemNaoEncontrado as erro:
         db.rollback()
         raise HTTPException(status.HTTP_404_NOT_FOUND, str(erro)) from erro
@@ -96,8 +174,6 @@ def limpar_historico_movimentacoes(
     """Remove o histórico sem alterar os saldos atuais dos itens."""
     total = db.scalar(select(func.count()).select_from(Movimentacao)) or 0
     try:
-        # TRUNCATE não dispara o trigger de imutabilidade (que bloqueia DELETE).
-        # Não reinicia a sequência: IDs antigos nunca serão reutilizados.
         db.execute(text("TRUNCATE TABLE movimentacoes"))
         registrar(
             db,

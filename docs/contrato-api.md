@@ -53,6 +53,15 @@ para dados fora do contrato e `429` após cinco falhas por IP e e-mail na janela
 de dez minutos. Credenciais inválidas usam a mensagem
 `{"detail": "E-mail ou senha incorretos"}`.
 
+## Limitação de requisições
+
+As rotas de itens e movimentações aplicam limites por usuário e por IP,
+compartilhados entre processos por meio do PostgreSQL. Os padrões são 100
+requisições por minuto por usuário e 300 por minuto por IP. Os valores podem
+ser ajustados por `API_RATE_LIMIT_USER_PER_MINUTE` e
+`API_RATE_LIMIT_IP_PER_MINUTE`. Ao exceder o limite, a API responde `429`
+com `Retry-After: 60`.
+
 ## Cadastrar item
 
 ```http
@@ -171,6 +180,7 @@ cliente.
 ```http
 POST /movimentacoes
 Content-Type: application/json
+Idempotency-Key: 2b5d2f62-2c73-4cb4-b0e8-6e4c2e25b2d1
 Cookie: access_token=<cookie-recebido-no-login>
 
 {
@@ -187,6 +197,14 @@ Cookie: access_token=<cookie-recebido-no-login>
 | `tipo` | string | Obrigatório: somente `entrada` ou `saida`, exatamente nessa grafia. |
 | `quantidade` | string decimal ou número JSON | Obrigatória, positiva, até `99999999.99`, com no máximo duas casas decimais após desconsiderar zeros finais. Recomenda-se enviar string para preservar a precisão. |
 | `observacao` | string ou `null` | Opcional, padrão `null`; até 1000 caracteres após remover espaços das extremidades. |
+
+O header `Idempotency-Key` é obrigatório e deve conter um UUID. A chave é
+única por usuário. O frontend mantém a chave e o corpo pendente em sessionStorage
+para permitir repetir a mesma operação após uma falha de rede ou recarregamento
+da página. Repetir a mesma chave com o mesmo corpo retorna a resposta original
+sem criar outra movimentação. Reutilizar a chave com outro corpo
+retorna `409 Conflict`. O registro da chave e a movimentação são confirmados
+na mesma transação PostgreSQL.
 
 Casas decimais adicionais contendo apenas zeros são aceitas: `"2.3500"`
 equivale a `"2.35"`. Quantidade zero, negativa, não numérica, infinita,
@@ -215,10 +233,11 @@ Resposta `201 Created`, partindo de um item com saldo zero:
 Para registrar uma saída desse item:
 
 ```javascript
+const idempotencyKey = crypto.randomUUID(); // reutilize esta chave se precisar reenviar a mesma operação
 const resposta = await fetch("/movimentacoes", {
   method: "POST",
   credentials: "include",
-  headers: { "Content-Type": "application/json" },
+  headers: { "Content-Type": "application/json", "Idempotency-Key": idempotencyKey },
   body: JSON.stringify({
     item_id: 12,
     tipo: "saida",
@@ -252,7 +271,7 @@ O backend executa rollback nas rejeições e falhas detectadas; saldo e históri
 pertencem à mesma transação. A implementação
 segue o bloqueio de linhas descrito na
 [documentação do PostgreSQL 16](https://www.postgresql.org/docs/16/explicit-locking.html#LOCKING-ROWS).
-Não foi necessário alterar o schema do banco.
+O schema inclui as tabelas de controle de idempotência e rate limiting; bancos existentes devem aplicar a migração `002_protecao_idempotencia_rate_limit.sql`.
 
 ### Erros da movimentação
 
@@ -268,16 +287,16 @@ Não foi necessário alterar o schema do banco.
 Requisições rejeitadas não alteram o saldo nem acrescentam histórico.
 Falhas inesperadas do banco retornam erro de servidor, sem confirmar uma
 movimentação parcial. Cada `POST` bem-sucedido cria uma nova movimentação;
-esta entrega não oferece chave de idempotência para reenvios.
+reenvios com a mesma chave não repetem a alteração de saldo.
 
 ## Códigos de resposta
 
 | Rota | Sucesso | Erros previstos |
 | --- | --- | --- |
 | `POST /auth/login` | `200` | `401` credenciais/usuário; `422` validação; `429` limite de tentativas. |
-| `POST /itens` | `201` | `401` autenticação; `409` par nome/unidade duplicado; `422` validação. |
-| `GET /itens` | `200` | `401` autenticação; `422` paginação inválida. |
-| `POST /movimentacoes` | `201` | `401` autenticação; `404` item; `409` conflito de estoque; `422` validação. |
+| `POST /itens` | `201` | `401` autenticação; `409` par nome/unidade duplicado; `422` validação; `429` limite de requisições. |
+| `GET /itens` | `200` | `401` autenticação; `422` paginação inválida; `429` limite de requisições. |
+| `POST /movimentacoes` | `201` | `401` autenticação; `404` item; `409` conflito de estoque ou chave reutilizada com outro corpo; `422` validação; `429` limite de requisições. |
 
 ## Verificação
 
