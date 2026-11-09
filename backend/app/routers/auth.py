@@ -77,7 +77,7 @@ def logout(response: Response):
     response.delete_cookie(COOKIE_NOME, path="/")
 
 
-@router.get("/csrf", dependencies=[Depends(limitar_api)])
+@router.get("/csrf")
 def obter_token_csrf(usuario: Usuario = Depends(get_usuario_atual)):
     return {"csrf_token": token_csrf(usuario.id, usuario.token_versao)}
 
