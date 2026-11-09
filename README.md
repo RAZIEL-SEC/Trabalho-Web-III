@@ -43,12 +43,14 @@ na ausência desse cabeçalho, em `Referer`. Para sessões autenticadas, também
 é obrigatório enviar o cabeçalho `X-CSRF-Token`, obtido em `GET /auth/csrf`.
 O frontend do painel já faz essa obtenção automaticamente.
 
-Por padrão, somente a mesma origem da API é aceita. Se o frontend for servido
-por outra origem, configure `CSRF_TRUSTED_ORIGINS` com uma lista separada por
-vírgulas de origens HTTPS exatas (incluindo porta quando aplicável), por exemplo:
-`https://painel.exemplo.com`. Não use curingas nem inclua domínios que não
-controla. A lista deve refletir a origem real do navegador, não o endereço
-interno do container.
+Por padrão, somente a mesma origem da API é aceita. `CSRF_TRUSTED_ORIGINS`
+é apenas uma allowlist para a validação de origem; ela **não habilita CORS**
+nem faz o navegador enviar cookies entre origens. Se painel e API realmente
+estiverem em origens diferentes, será necessário projetar CORS com credenciais,
+`fetch(..., { credentials: "include" })` e a política de cookies em conjunto.
+Prefira manter painel e API na mesma origem. Quando necessário, configure
+origens HTTPS exatas (incluindo porta), separadas por vírgulas, sem curingas.
+
 
 
 **Importante:** a allowlist de CSRF não altera a política do cookie de sessão
