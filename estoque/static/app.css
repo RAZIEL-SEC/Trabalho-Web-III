@@ -83,7 +83,7 @@
 .brand-mark .logo-imagem{background:transparent!important}
 
 
-/* Transições entre documentos: mantém a navegação multipágina e evita o flash branco. */
+/* Transições entre documentos sem fade de opacidade: evita revelar o canvas branco. */
 @view-transition {
   navigation: auto;
 }
@@ -92,22 +92,27 @@
   view-transition-name: estoque-layout;
 }
 
+/* O fundo do snapshot acompanha o tema, inclusive durante a troca de documento. */
+::view-transition {
+  background-color: #f4f7fb;
+}
+
+:root[data-theme="dark"]::view-transition {
+  background-color: #111b27;
+}
+
+/* Movimento sutil sem reduzir a opacidade do conteúdo. */
 ::view-transition-old(estoque-layout) {
-  animation: estoque-page-out 120ms ease both;
+  animation: none;
 }
 
 ::view-transition-new(estoque-layout) {
-  animation: estoque-page-in 180ms ease both;
+  animation: estoque-page-enter 140ms ease-out both;
 }
 
-@keyframes estoque-page-out {
-  from { opacity: 1; }
-  to { opacity: 0.94; }
-}
-
-@keyframes estoque-page-in {
-  from { opacity: 0.94; }
-  to { opacity: 1; }
+@keyframes estoque-page-enter {
+  from { transform: translateY(4px); }
+  to { transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
