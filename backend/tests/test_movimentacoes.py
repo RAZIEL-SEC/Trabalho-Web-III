@@ -402,8 +402,8 @@ def test_chave_idempotencia_nao_pode_ser_reutilizada_com_outro_corpo(
 def test_movimentacao_exige_chave_de_idempotencia(
     client: TestClient, item_id: int
 ):
-    response = client.post(
-        "/movimentacoes",
+    response = client.request(
+        "POST", "/movimentacoes",
         json={"item_id": item_id, "tipo": "entrada", "quantidade": "1.00"},
     )
     assert response.status_code == 422
