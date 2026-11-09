@@ -20,3 +20,17 @@ uvicorn app.main:app --reload
 https://trabalho-web-iii.razielsec01.workers.dev
 
 https://amigosdozealguem.duckdns.org/estoque/login.html
+
+
+## Migrações do banco
+
+Ao iniciar o container da API, o comando `python -m app.migrate` aplica os
+scripts SQL idempotentes de `database/migrations/` antes de iniciar o Uvicorn.
+Isso permite atualizar bancos persistentes já existentes sem depender da
+execução de `schema.sql`, que o PostgreSQL executa apenas na criação inicial
+do volume.
+
+A API deve ficar acessível somente pelo proxy reverso. O proxy deve sobrescrever
+`X-Forwarded-For`; o backend usa o primeiro endereço válido desse cabeçalho
+para aplicar o limite por IP. Não exponha a porta da API diretamente à internet.
+Em produção, configure `APP_ENV=production` e `COOKIE_SECURE=true`.
