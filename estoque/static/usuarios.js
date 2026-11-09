@@ -21,7 +21,7 @@ function celula(texto) {
 }
 
 async function alterar(id, mudanca) {
-  const r = await fetch(`/usuarios/${id}`, {
+  const r = await apiFetch(`/usuarios/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(mudanca),
@@ -41,7 +41,7 @@ async function excluir(id, nome, botao) {
 
   botao.disabled = true;
   try {
-    const r = await fetch(`/usuarios/${id}`, { method: "DELETE" });
+    const r = await apiFetch(`/usuarios/${id}`, { method: "DELETE" });
     if (r.status === 401) {
       window.location.href = "login.html";
       return;
@@ -112,7 +112,7 @@ form.addEventListener("submit", async (e) => {
   botao.disabled = true;
   const dados = Object.fromEntries(new FormData(form));
   try {
-    const r = await fetch("/usuarios", {
+    const r = await apiFetch("/usuarios", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dados),
