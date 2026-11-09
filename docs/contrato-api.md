@@ -171,6 +171,7 @@ cliente.
 ```http
 POST /movimentacoes
 Content-Type: application/json
+Idempotency-Key: 2b5d2f62-2c73-4cb4-b0e8-6e4c2e25b2d1
 Cookie: access_token=<cookie-recebido-no-login>
 
 {
@@ -218,7 +219,7 @@ Para registrar uma saída desse item:
 const resposta = await fetch("/movimentacoes", {
   method: "POST",
   credentials: "include",
-  headers: { "Content-Type": "application/json" },
+  headers: { "Content-Type": "application/json", "Idempotency-Key": crypto.randomUUID() },
   body: JSON.stringify({
     item_id: 12,
     tipo: "saida",
@@ -252,7 +253,7 @@ O backend executa rollback nas rejeições e falhas detectadas; saldo e históri
 pertencem à mesma transação. A implementação
 segue o bloqueio de linhas descrito na
 [documentação do PostgreSQL 16](https://www.postgresql.org/docs/16/explicit-locking.html#LOCKING-ROWS).
-Não foi necessário alterar o schema do banco.
+O schema inclui as tabelas de controle de idempotência e rate limiting; bancos existentes devem aplicar a migração `002_protecao_idempotencia_rate_limit.sql`.
 
 ### Erros da movimentação
 
@@ -268,16 +269,16 @@ Não foi necessário alterar o schema do banco.
 Requisições rejeitadas não alteram o saldo nem acrescentam histórico.
 Falhas inesperadas do banco retornam erro de servidor, sem confirmar uma
 movimentação parcial. Cada `POST` bem-sucedido cria uma nova movimentação;
-esta entrega não oferece chave de idempotência para reenvios.
+reenvios com a mesma chave não repetem a alteração de saldo.
 
 ## Códigos de resposta
 
 | Rota | Sucesso | Erros previstos |
 | --- | --- | --- |
 | `POST /auth/login` | `200` | `401` credenciais/usuário; `422` validação; `429` limite de tentativas. |
-| `POST /itens` | `201` | `401` autenticação; `409` par nome/unidade duplicado; `422` validação. |
-| `GET /itens` | `200` | `401` autenticação; `422` paginação inválida. |
-| `POST /movimentacoes` | `201` | `401` autenticação; `404` item; `409` conflito de estoque; `422` validação. |
+| `POST /itens` | `201` | `401` autenticação; `409` par nome/unidade duplicado; `422` validação; `429` limite de requisições. |
+| `GET /itens` | `200` | `401` autenticação; `422` paginação inválida; `429` limite de requisições. |
+| `POST /movimentacoes` | `201` | `401` autenticação; `404` item; `409` conflito de estoque ou chave reutilizada com outro corpo; `422` validação; `429` limite de requisições. |
 
 ## Verificação
 
