@@ -51,3 +51,16 @@ def test_rate_limit_nao_afeta_usuario_diferente(
     )
     assert login.status_code == 200
     assert client_autenticado.get("/itens").status_code == 200
+
+
+def test_rate_limit_por_ip_e_compartilhado_entre_rotas(
+    client_autenticado: TestClient, monkeypatch
+):
+    monkeypatch.setattr(settings, "api_rate_limit_user_per_minute", 100)
+    monkeypatch.setattr(settings, "api_rate_limit_ip_per_minute", 1)
+
+    assert client_autenticado.get("/itens").status_code == 200
+    resposta = client_autenticado.get("/movimentacoes")
+
+    assert resposta.status_code == 429
+    assert resposta.headers["retry-after"] == "60"
