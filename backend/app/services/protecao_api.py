@@ -36,7 +36,7 @@ def _ip_do_cliente(request: Request) -> str:
     sobrescrever X-Forwarded-For. O serviço não deve ficar exposto diretamente.
     """
     encaminhado = request.headers.get("x-forwarded-for")
-    candidato = encaminhado.split(",", 1)[0].strip() if encaminhado else ""
+    candidato = encaminhado.split(",")[-1].strip() if encaminhado else ""
     if candidato:
         try:
             return str(ipaddress.ip_address(candidato))
