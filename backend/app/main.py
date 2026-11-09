@@ -1,11 +1,12 @@
 from pathlib import Path
 
-from fastapi import Depends, FastAPI
-from fastapi.responses import RedirectResponse
+from fastapi import Depends, FastAPI, Request
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.core.csrf import validar_requisicao_csrf
 from app.core.deps import get_db
 from app.routers import auth, itens, movimentacoes, usuarios
 
@@ -14,6 +15,16 @@ app.include_router(auth.router)
 app.include_router(usuarios.router)
 app.include_router(itens.router)
 app.include_router(movimentacoes.router)
+
+
+@app.middleware("http")
+async def protecao_csrf(request: Request, call_next):
+    if not validar_requisicao_csrf(request):
+        return JSONResponse(
+            status_code=403,
+            content={"detail": "Requisição bloqueada pela proteção CSRF."},
+        )
+    return await call_next(request)
 
 
 @app.get("/saude")
@@ -37,6 +48,6 @@ def tela_usuarios():
     return RedirectResponse("/estoque/usuarios.html", status_code=307)
 
 
-# telas do sistema, servidas na mesma origem da API (o cookie de sessão depende disso)
+# API e painel são servidos na mesma origem.
 PASTA_ESTOQUE = Path(__file__).resolve().parents[2] / "estoque"
 app.mount("/estoque", StaticFiles(directory=PASTA_ESTOQUE, html=True), name="estoque")

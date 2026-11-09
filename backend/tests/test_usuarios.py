@@ -11,6 +11,7 @@ from app.models.item import Item
 from app.models.movimentacao import Movimentacao
 from app.models.usuario import Usuario
 from app.routers import auth as auth_router
+from .http_client import IdempotentTestClient
 
 SENHA_NOVA = "uma-senha-longa-123"
 
@@ -227,7 +228,7 @@ def test_atualizar_usuario_inexistente_da_404(client_admin):
 
 def test_desativar_derruba_a_sessao_na_hora(client_admin, db, senha_hash_teste, senha_teste):
     operador = _criar(db, senha_hash_teste)
-    outro = TestClient(app, base_url="https://testserver")  # outro navegador
+    outro = IdempotentTestClient(app, base_url="https://testserver")  # outro navegador
     assert outro.post(
         "/auth/login", json={"email": operador.email, "senha": senha_teste}
     ).status_code == 200

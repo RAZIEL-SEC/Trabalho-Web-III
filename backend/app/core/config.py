@@ -8,9 +8,18 @@ class Settings(BaseSettings):
     access_token_minutes: int = 30
     app_env: str = "development"
     cookie_secure: bool = False  # True em produção, com HTTPS
+    csrf_trusted_origins: str = ""
     api_rate_limit_user_per_minute: int = 100
     api_rate_limit_ip_per_minute: int = 300
     model_config = SettingsConfigDict(env_file=".env")
+
+    @property
+    def trusted_csrf_origins(self) -> set[str]:
+        return {
+            origin.strip().rstrip("/")
+            for origin in self.csrf_trusted_origins.split(",")
+            if origin.strip()
+        }
 
     @model_validator(mode="after")
     def _validar_configuracoes(self):
