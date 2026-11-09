@@ -19,6 +19,7 @@ from app.main import app
 from app.models.item import Item
 from app.models.movimentacao import Movimentacao
 from app.models.usuario import Usuario
+from http_client import IdempotentTestClient
 
 
 @pytest.fixture
@@ -63,7 +64,7 @@ def clientes_concorrentes(
     try:
         with ExitStack() as stack:
             clientes = [
-                stack.enter_context(TestClient(app, base_url="https://testserver"))
+                stack.enter_context(IdempotentTestClient(app, base_url="https://testserver"))
                 for _ in range(2)
             ]
             for client in clientes:
