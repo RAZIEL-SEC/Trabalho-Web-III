@@ -47,6 +47,10 @@ def validar_requisicao_csrf(request: Request) -> bool:
         return True
     if not origem_permitida(request):
         return False
+    # Login pode ocorrer enquanto o navegador ainda envia um cookie antigo.
+    # A origem continua obrigatória, mas não há token da sessão anterior a exigir.
+    if request.url.path == "/auth/login":
+        return True
     cookie = request.cookies.get(COOKIE_NOME)
     sessao = ler_sessao(cookie) if cookie else None
     if sessao is None:
