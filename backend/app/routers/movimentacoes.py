@@ -61,12 +61,12 @@ def cadastrar_movimentacao(
     usuario: Usuario = Depends(get_usuario_atual),
     idempotency_key: UUID = Header(alias="Idempotency-Key"),
 ) -> MovimentacaoOut:
-    chave = str(idempotency_key)
+    chave = idempotency_key
     corpo_canonico = json.dumps(
         {
             "item_id": dados.item_id,
             "tipo": dados.tipo,
-            "quantidade": str(dados.quantidade),
+            "quantidade": format(dados.quantidade.quantize(Decimal("0.01")), "f"),
             "observacao": dados.observacao,
         },
         ensure_ascii=False,
