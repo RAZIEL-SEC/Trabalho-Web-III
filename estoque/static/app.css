@@ -81,3 +81,42 @@
 
 /* Mantém as cores originais da marca, sem mistura escurecedora com o fundo. */
 .brand-mark .logo-imagem{background:transparent!important}
+
+
+/* Transições entre documentos: mantém a navegação multipágina e evita o flash branco. */
+@view-transition {
+  navigation: auto;
+}
+
+:root {
+  view-transition-name: none;
+}
+
+.layout {
+  view-transition-name: estoque-layout;
+}
+
+::view-transition-old(estoque-layout) {
+  animation: estoque-page-out 120ms ease both;
+}
+
+::view-transition-new(estoque-layout) {
+  animation: estoque-page-in 180ms ease both;
+}
+
+@keyframes estoque-page-out {
+  from { opacity: 1; }
+  to { opacity: 0.94; }
+}
+
+@keyframes estoque-page-in {
+  from { opacity: 0.94; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(estoque-layout),
+  ::view-transition-new(estoque-layout) {
+    animation: none;
+  }
+}
