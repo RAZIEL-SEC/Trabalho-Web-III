@@ -14,6 +14,7 @@ from app.main import app
 from app.models.auditoria import Auditoria
 from app.models.usuario import Usuario
 from app.routers import auth as auth_router
+from .http_client import IdempotentTestClient
 
 NOVA_SENHA = "uma-senha-nova-bem-longa"
 
@@ -27,7 +28,7 @@ def limpar_limite_de_tentativas():
 
 def _navegador() -> TestClient:
     """Outro navegador/dispositivo: cookies próprios, mesmo banco do teste."""
-    return TestClient(app, base_url="https://testserver")
+    return IdempotentTestClient(app, base_url="https://testserver")
 
 
 def _login(cliente, email, senha):
