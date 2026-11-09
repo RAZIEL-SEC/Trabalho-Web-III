@@ -1,7 +1,5 @@
 -- Proteções de idempotência e limitação de requisições.
 -- Execute uma única vez em bancos já existentes.
-BEGIN;
-
 CREATE TABLE IF NOT EXISTS idempotency_keys (
     id              BIGSERIAL PRIMARY KEY,
     usuario_id      INTEGER NOT NULL,
@@ -20,5 +18,3 @@ CREATE TABLE IF NOT EXISTS rate_limit_counters (
     window_start    TIMESTAMPTZ NOT NULL,
     request_count   INTEGER NOT NULL CHECK (request_count > 0)
 );
-
-COMMIT;
