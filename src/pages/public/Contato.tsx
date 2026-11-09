@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import Icon from '../../components/Icon';
 
+const socialLinks = [
+  { label: 'Instagram', icon: 'instagram', href: 'https://www.instagram.com/amigosdozealguem/', external: true },
+  { label: 'Facebook', icon: 'facebook', href: 'https://www.facebook.com/AmigosDoZeAlguem', external: true },
+];
+
 export default function Contato() {
   const [submissionMessage, setSubmissionMessage] = useState('');
   return (
@@ -53,10 +58,7 @@ export default function Contato() {
             <div className="mt-10">
               <h3 className="font-bold text-[#1a3a6e] mb-4">Redes sociais</h3>
               <div className="flex gap-4">
-                {([
-                  { label: 'Instagram', icon: 'instagram', href: 'https://www.instagram.com/amigosdozealguem/', external: true },
-                  { label: 'Facebook', icon: 'facebook', href: 'https://www.facebook.com/AmigosDoZeAlguem', external: true },
-                ] as const).map(({ label, icon, href, external }) => (
+                {socialLinks.map(({ label, icon, href, external }) => (
                   <a
                     key={label}
                     href={href}
