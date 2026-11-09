@@ -5,13 +5,12 @@ git clone https://github.com/RAZIEL-SEC/Trabalho-Web-III.git
 cd Trabalho-Web-III
 
 python3 -m venv .venv
-source .venv/bin/activate          // Windows: .venv\Scripts\activate
+source .venv/bin/activate          // Windows: .venv\\Scripts\\activate
 python -m pip install -r backend/requirements.txt
 
-// Linux: cp .env.example backend/.env       
+// Linux: cp .env.example backend/.env
 
-// Windows: copy .env.example backend\.env
-
+// Windows: copy .env.example backend\\.env
 docker compose up -d
 cd backend
 uvicorn app.main:app --reload
@@ -35,6 +34,33 @@ A API deve ficar acessível somente pelo proxy reverso. O proxy deve sobrescreve
 para aplicar o limite por IP. Não exponha a porta da API diretamente à internet.
 Em produção, configure `APP_ENV=production` e `COOKIE_SECURE=true`.
 
+### Proxy reverso e cabeçalhos encaminhados
+
+O Uvicorn só deve confiar nos cabeçalhos `X-Forwarded-Proto` e
+`X-Forwarded-For` quando a conexão vier de um proxy conhecido. A lista é
+configurada pela variável `FORWARDED_ALLOW_IPS`, que aceita IPs ou CIDRs
+separados por vírgula. O Compose usa `127.0.0.1` como fallback conservador;
+em uma implantação atrás de proxy, configure explicitamente o endereço ou a
+faixa privada restrita do proxy no arquivo `.env`.
+
+Exemplo para a VPS atual, após confirmar o endereço de origem do Caddy na rede
+Docker:
+
+```env
+FORWARDED_ALLOW_IPS=172.20.0.1
+```
+
+Não use `*` como configuração padrão. Mantenha a porta da API acessível
+somente pelo proxy e limite o tráfego por firewall/regras de rede. Em outra
+infraestrutura, como AWS, configure o IP privado ou CIDR específico do proxy
+real daquela arquitetura; não reutilize automaticamente o endereço da VPS.
+Se o proxy tiver endereços dinâmicos, restrinja também o acesso por Security
+Groups/firewall e escolha uma faixa privada dedicada ao proxy.
+
+O Dockerfile habilita explicitamente `--proxy-headers` e passa a lista
+`FORWARDED_ALLOW_IPS` ao Uvicorn. Isso permite que o FastAPI reconheça o
+esquema HTTPS original encaminhado pelo Caddy sem ampliar a confiança a
+origens não autorizadas.
 
 ## Proteção CSRF
 
