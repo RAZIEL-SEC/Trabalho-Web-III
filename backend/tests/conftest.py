@@ -14,7 +14,7 @@ from app.core.security import gerar_hash
 from app.db.session import engine
 from app.main import app
 from app.models.usuario import Usuario
-from http_client import IdempotentTestClient
+from tests.http_client import IdempotentTestClient
 
 
 @pytest.fixture(scope="session")
