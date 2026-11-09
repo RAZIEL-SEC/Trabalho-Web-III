@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.csrf import token_csrf
 from app.core.deps import get_db, get_usuario_atual
 from app.core.security import (
     COOKIE_NOME,
@@ -20,8 +21,6 @@ from app.services.sessoes import invalidar_sessoes
 from app.services.protecao_api import limitar_api, limitar_por_ip
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-
-# limite simples em memória: 5 falhas por 10 min por IP + e-mail
 JANELA_S, MAX_FALHAS = 600, 5
 _falhas: dict[str, deque] = defaultdict(deque)
 
@@ -54,28 +53,18 @@ def _checar_limite(chave: str) -> None:
 
 
 @router.post("/login", response_model=UsuarioOut, dependencies=[Depends(limitar_por_ip)])
-def login(
-    dados: LoginIn,
-    request: Request,
-    response: Response,
-    db: Session = Depends(get_db),
-):
+def login(dados: LoginIn, request: Request, response: Response, db: Session = Depends(get_db)):
     email = dados.email.strip().lower()
     ip = ip_do_cliente(request)
     chave = f"{ip}|{email}"
     _checar_limite(chave)
-
     usuario = db.scalar(select(Usuario).where(Usuario.email == email))
     senha_ok = verificar_senha(dados.senha, usuario.senha_hash if usuario else HASH_FALSO)
-
     if not (usuario and usuario.ativo and senha_ok):
         _falhas[chave].append(time.monotonic())
-        # e-mail desconhecido não é gravado: poderia ser uma senha digitada no campo errado
         registrar(db, usuario.id if usuario else None, "login_falha", None, ip)
         db.commit()
-        # mensagem genérica: não revela se o e-mail existe
         raise HTTPException(401, "E-mail ou senha incorretos")
-
     _falhas.pop(chave, None)
     registrar(db, usuario.id, "login_ok", None, ip)
     db.commit()
@@ -88,40 +77,34 @@ def logout(response: Response):
     response.delete_cookie(COOKIE_NOME, path="/")
 
 
+@router.get("/csrf", dependencies=[Depends(limitar_api)])
+def obter_token_csrf(usuario: Usuario = Depends(get_usuario_atual)):
+    return {"csrf_token": token_csrf(usuario.id, usuario.token_versao)}
+
+
 @router.get("/eu", response_model=UsuarioOut, dependencies=[Depends(limitar_api)])
 def eu(usuario: Usuario = Depends(get_usuario_atual)):
     return usuario
 
 
 @router.post("/trocar-senha", status_code=204, dependencies=[Depends(limitar_api)])
-def trocar_senha(
-    dados: TrocarSenhaIn,
-    request: Request,
-    response: Response,
-    db: Session = Depends(get_db),
-    usuario: Usuario = Depends(get_usuario_atual),
-):
+def trocar_senha(dados: TrocarSenhaIn, request: Request, response: Response,
+                 db: Session = Depends(get_db), usuario: Usuario = Depends(get_usuario_atual)):
     if not verificar_senha(dados.senha_atual, usuario.senha_hash):
         raise HTTPException(400, "Senha atual incorreta")
     if dados.senha_nova == dados.senha_atual:
         raise HTTPException(400, "A nova senha deve ser diferente da atual")
     usuario.senha_hash = gerar_hash(dados.senha_nova)
-    invalidar_sessoes(usuario)  # derruba as sessões de outros dispositivos
+    invalidar_sessoes(usuario)
     registrar(db, usuario.id, "senha_alterada", None, ip_do_cliente(request))
     db.commit()
     db.refresh(usuario)
-    # esta sessão continua: recebe um cookie com a versão nova
     definir_cookie(response, usuario.id, usuario.token_versao)
 
 
 @router.post("/sair-de-todos", status_code=204, dependencies=[Depends(limitar_api)])
-def sair_de_todos(
-    request: Request,
-    response: Response,
-    db: Session = Depends(get_db),
-    usuario: Usuario = Depends(get_usuario_atual),
-):
-    """Encerra todas as sessões abertas, inclusive esta."""
+def sair_de_todos(request: Request, response: Response, db: Session = Depends(get_db),
+                  usuario: Usuario = Depends(get_usuario_atual)):
     invalidar_sessoes(usuario)
     registrar(db, usuario.id, "sessoes_encerradas", None, ip_do_cliente(request))
     db.commit()
