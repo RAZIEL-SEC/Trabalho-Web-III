@@ -229,3 +229,41 @@ def test_falha_no_commit_reverte_saldo_e_historico(
     })
     assert response.status_code == 201
     assert response.json()["saldo_atual"] == saldo_final
+
+
+def test_reenvio_concorrente_com_mesma_chave_cria_uma_movimentacao(
+    clientes_concorrentes,
+):
+    clientes, schema, _ = clientes_concorrentes
+    cadastro = clientes[0].post(
+        "/itens", json={"nome": "Arroz idempotente", "unidade": "kg"}
+    )
+    assert cadastro.status_code == 201
+    item_id = cadastro.json()["id"]
+    chave = str(uuid4())
+    dados = {"item_id": item_id, "tipo": "entrada", "quantidade": "5.00"}
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        tarefas = [
+            executor.submit(
+                client.post,
+                "/movimentacoes",
+                json=dados,
+                headers={"Idempotency-Key": chave},
+            )
+            for client in clientes
+        ]
+        respostas = [tarefa.result(timeout=20) for tarefa in tarefas]
+
+    assert [resposta.status_code for resposta in respostas] == [201, 201]
+    assert respostas[0].json() == respostas[1].json()
+
+    with engine.begin() as connection:
+        connection.exec_driver_sql(f'SET LOCAL search_path TO "{schema}"')
+        saldo = connection.scalar(select(Item.saldo).where(Item.id == item_id))
+        quantidade = connection.scalar(
+            text("SELECT count(*) FROM movimentacoes WHERE item_id = :item_id"),
+            {"item_id": item_id},
+        )
+    assert saldo == Decimal("5.00")
+    assert quantidade == 1
