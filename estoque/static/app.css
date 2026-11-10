@@ -121,3 +121,13 @@
     animation: none;
   }
 }
+
+
+/* Acesso de retorno ao site institucional em todas as telas do painel. */
+.institutional-link{width:100%;margin:0 0 12px;justify-content:flex-start;background:#f5f9fc;color:#286c9e;border:1px solid #d9e5ef}
+.institutional-link:hover{background:#eaf3fa;color:#1d6595}
+.institutional-link .material-symbols-outlined{font-size:18px;line-height:1}
+:root[data-theme="dark"] .institutional-link{background:#1a2939;border-color:#40566b;color:#b9d9ef}
+:root[data-theme="dark"] .institutional-link:hover{background:#263c52;color:#d4eafa}
+@media(max-width:850px){.institutional-link{margin:0}}
+@media(max-width:560px){.institutional-link{width:100%;justify-content:center}}
