@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import Icon from '../../components/Icon';
 
 export default function Dashboard() {
   return (
@@ -7,7 +8,7 @@ export default function Dashboard() {
       <div className="mb-8">
         <p className="text-sm text-[#4a6080] mb-1">{'{createdAt}'}</p>
         <h1 className="font-serif text-2xl md:text-3xl font-bold text-[#1a3a6e]">
-          Bem-vinda, {'{userName}'} 👋
+          Bem-vinda, {'{userName}'} <Icon name="waving_hand" size={22} className="align-middle text-[#2372ba]" />
         </h1>
         <p className="text-[#4a6080] mt-1">Resumo de {'{movementList}'}.</p>
       </div>
@@ -34,7 +35,7 @@ export default function Dashboard() {
           to="/admin/dashboard/registrar"
           className="inline-flex items-center gap-2 bg-[#1a3a6e] text-white font-bold px-6 py-3 rounded-md hover:bg-[#0f1f3d] transition-colors"
         >
-          <span>➕</span> Registrar movimentação
+          <Icon name="add" size={20} /> Registrar movimentação
         </Link>
       </div>
 

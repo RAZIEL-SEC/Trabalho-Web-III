@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { Movimentacao, TipoMovimentacao } from '../../data/apiTypes';
+import Icon from '../../components/Icon';
 
 export default function Movimentacoes() {
   const [dados] = useState<Movimentacao[]>([]);
@@ -27,7 +28,7 @@ export default function Movimentacoes() {
           to="/admin/dashboard/registrar"
           className="inline-flex items-center gap-2 bg-[#1a3a6e] text-white font-bold px-5 py-2.5 rounded-md hover:bg-[#0f1f3d] transition-colors text-sm self-start sm:self-auto"
         >
-          ➕ Registrar
+          <Icon name="add" size={18} /> Registrar
         </Link>
       </div>
 
@@ -63,7 +64,7 @@ export default function Movimentacoes() {
       <div className="hidden md:block bg-white border border-[#c8d8ef] rounded-xl overflow-hidden">
         {filtrados.length === 0 ? (
           <div className="text-center py-16 text-[#4a6080]">
-            <div className="text-4xl mb-3">🔍</div>
+            <div className="text-4xl mb-3 text-[#2372ba]"><Icon name="search" size={36} /></div>
             <p className="font-semibold">Nenhum registro encontrado</p>
             <p className="text-sm mt-1">Tente ajustar os filtros ou a busca.</p>
           </div>
@@ -114,7 +115,7 @@ export default function Movimentacoes() {
       <div className="md:hidden space-y-3">
         {filtrados.length === 0 ? (
           <div className="bg-white border border-[#c8d8ef] rounded-xl text-center py-12 text-[#4a6080]">
-            <div className="text-3xl mb-2">🔍</div>
+            <div className="text-3xl mb-2 text-[#2372ba]"><Icon name="search" size={30} /></div>
             <p className="font-semibold text-sm">Nenhum registro encontrado</p>
           </div>
         ) : (

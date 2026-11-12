@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router';
 import type { Movimentacao } from '../../data/apiTypes';
+import Icon from '../../components/Icon';
 
 function formatarData(iso: string) {
   return new Date(iso).toLocaleString('pt-BR', {
@@ -15,7 +16,7 @@ export default function Detalhes() {
   if (!mov) {
     return (
       <div className="text-center py-24">
-        <div className="text-4xl mb-4">❌</div>
+        <div className="text-4xl mb-4 text-red-600"><Icon name="error" size={36} /></div>
         <h2 className="font-serif text-xl font-bold text-[#1a3a6e] mb-2">Registro não encontrado</h2>
         <p className="text-[#4a6080] mb-6">Aguardando carregamento de {'{movementDetail}'} para {'{movementId}'}.</p>
         <Link

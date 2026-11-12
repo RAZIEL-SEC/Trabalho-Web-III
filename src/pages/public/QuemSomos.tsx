@@ -1,3 +1,5 @@
+import Icon from '../../components/Icon';
+
 const valores = [
   { n: 1, nome: 'Humanização', desc: 'Tratamos cada pessoa com dignidade e respeito, reconhecendo sua humanidade acima de qualquer circunstância.' },
   { n: 2, nome: 'Geração de Renda', desc: 'Apoiamos iniciativas que criam oportunidades de trabalho e autonomia financeira.' },
@@ -51,14 +53,14 @@ export default function QuemSomos() {
         {/* Mission & Vision */}
         <div className="grid md:grid-cols-2 gap-6 mb-16">
           <div className="bg-[#ddeeff] rounded-xl p-8">
-            <div className="text-3xl mb-3">🎯</div>
+            <div className="text-3xl mb-3 text-[#1a3a6e]"><Icon name="target" size={32} /></div>
             <h3 className="font-serif font-bold text-[#1a3a6e] text-xl mb-3">Missão</h3>
             <p className="text-[#4a6080] leading-relaxed">
               Combater a fome e a vulnerabilidade social por meio de ações coletivas, solidárias e sustentáveis, respeitando a dignidade de cada pessoa atendida.
             </p>
           </div>
           <div className="bg-[#1a3a6e] rounded-xl p-8 text-white">
-            <div className="text-3xl mb-3">🌟</div>
+            <div className="text-3xl mb-3"><Icon name="star" size={32} /></div>
             <h3 className="font-serif font-bold text-xl mb-3">Visão</h3>
             <p className="text-white/80 leading-relaxed">
               Um Brasil onde nenhuma pessoa precise dormir com fome, e onde cada comunidade tenha os recursos e o apoio necessários para se desenvolver com autonomia.

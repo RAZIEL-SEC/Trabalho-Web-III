@@ -1,4 +1,10 @@
 import { useState } from 'react';
+import Icon from '../../components/Icon';
+
+const socialLinks = [
+  { label: 'Instagram', icon: 'instagram', href: 'https://www.instagram.com/amigosdozealguem/', external: true },
+  { label: 'Facebook', icon: 'facebook', href: 'https://www.facebook.com/AmigosDoZeAlguem', external: true },
+];
 
 export default function Contato() {
   const [submissionMessage, setSubmissionMessage] = useState('');
@@ -21,7 +27,7 @@ export default function Contato() {
 
             <div className="space-y-6">
               <div className="flex gap-4 items-start">
-                <div className="w-12 h-12 bg-[#ddeeff] rounded-xl flex items-center justify-center text-2xl shrink-0">📧</div>
+                <div className="w-12 h-12 bg-[#ddeeff] rounded-xl flex items-center justify-center text-2xl shrink-0"><Icon name="mail" size={24} /></div>
                 <div>
                   <h3 className="font-bold text-[#1a3a6e] mb-1">E-mail</h3>
                   <p className="text-[#4a6080]">contato@amigosdozealgem.org.br</p>
@@ -30,7 +36,7 @@ export default function Contato() {
               </div>
 
               <div className="flex gap-4 items-start">
-                <div className="w-12 h-12 bg-[#ddeeff] rounded-xl flex items-center justify-center text-2xl shrink-0">📱</div>
+                <div className="w-12 h-12 bg-[#ddeeff] rounded-xl flex items-center justify-center text-2xl shrink-0"><Icon name="smartphone" size={24} /></div>
                 <div>
                   <h3 className="font-bold text-[#1a3a6e] mb-1">WhatsApp</h3>
                   <p className="text-[#4a6080]">+55 (21) 99680-1996</p>
@@ -39,7 +45,7 @@ export default function Contato() {
               </div>
 
               <div className="flex gap-4 items-start">
-                <div className="w-12 h-12 bg-[#ddeeff] rounded-xl flex items-center justify-center text-2xl shrink-0">📍</div>
+                <div className="w-12 h-12 bg-[#ddeeff] rounded-xl flex items-center justify-center text-2xl shrink-0"><Icon name="location_on" size={24} /></div>
                 <div>
                   <h3 className="font-bold text-[#1a3a6e] mb-1">Localização</h3>
                   <p className="text-[#4a6080]">Itaboraí, RJ</p>
@@ -52,10 +58,7 @@ export default function Contato() {
             <div className="mt-10">
               <h3 className="font-bold text-[#1a3a6e] mb-4">Redes sociais</h3>
               <div className="flex gap-4">
-                {[
-                  { label: 'Instagram', icon: '📸', href: 'https://www.instagram.com/amigosdozealguem/', external: true },
-                  { label: 'Facebook', icon: '📘', href: 'https://www.facebook.com/AmigosDoZeAlguem', external: true },
-                ].map(({ label, icon, href, external }) => (
+                {socialLinks.map(({ label, icon, href, external }) => (
                   <a
                     key={label}
                     href={href}
@@ -63,7 +66,7 @@ export default function Contato() {
                     rel={external ? 'noopener noreferrer' : undefined}
                     className="flex flex-col items-center gap-1 bg-[#ddeeff] rounded-xl p-4 hover:bg-[#c8d8ef] transition-colors w-24"
                   >
-                    <span className="text-2xl">{icon}</span>
+                    <Icon name={icon} size={24} className="text-[#1a3a6e]" />
                     <span className="text-xs font-semibold text-[#1a3a6e]">{label}</span>
                   </a>
                 ))}

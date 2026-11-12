@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import type { MouseEvent } from "react"
 import { Outlet, Link, NavLink, useLocation } from "react-router"
 import Logo from "../components/Logo"
+import Icon from "../components/Icon"
 
 const navLinks = [
   { to: "/", label: "Início" },
@@ -106,9 +107,9 @@ export default function PublicLayout() {
                 {label}
               </NavLink>
             ))}
-            <Link to="/admin" className="nav-login">
+            <a href="https://amigosdozealguem.duckdns.org/estoque/login.html" className="nav-login">
               Entrar
-            </Link>
+            </a>
           </nav>
           <button
             className="menu-trigger"
@@ -117,7 +118,7 @@ export default function PublicLayout() {
             aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
             aria-expanded={menuOpen}
           >
-            {menuOpen ? "✕" : "☰"}
+            <Icon name={menuOpen ? "close" : "menu"} size={22} />
           </button>
         </div>
         {menuOpen && (
@@ -133,13 +134,13 @@ export default function PublicLayout() {
                 {label}
               </NavLink>
             ))}
-            <Link
-              to="/admin"
+            <a
+              href="https://amigosdozealguem.duckdns.org/estoque/login.html"
               className="nav-login"
               onClick={() => setMenuOpen(false)}
             >
               Entrar
-            </Link>
+            </a>
           </nav>
         )}
       </header>
