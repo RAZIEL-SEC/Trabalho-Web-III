@@ -171,8 +171,8 @@ export default function PublicLayout() {
               <h3 className="footer-title">Fale com a gente</h3>
               <ul className="footer-list">
                 <li>
-                  <a href="mailto:contato@amigosdozealgem.org.br">
-                    contato@amigosdozealgem.org.br
+                  <a href="mailto:contato@amigosdozealguem.org.br">
+                    contato@amigosdozealguem.org.br
                   </a>
                 </li>
                 <li>
