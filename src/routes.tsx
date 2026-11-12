@@ -1,16 +1,10 @@
 import { createBrowserRouter } from 'react-router';
 import PublicLayout from './layouts/PublicLayout';
-import AdminLayout from './layouts/AdminLayout';
 import Home from './pages/public/Home';
 import QuemSomos from './pages/public/QuemSomos';
 import NossasAcoes from './pages/public/NossasAcoes';
 import ComoAjudar from './pages/public/ComoAjudar';
 import Contato from './pages/public/Contato';
-import Login from './pages/admin/Login';
-import Dashboard from './pages/admin/Dashboard';
-import Movimentacoes from './pages/admin/Movimentacoes';
-import Registrar from './pages/admin/Registrar';
-import Detalhes from './pages/admin/Detalhes';
 import { NotFoundPage, RouteErrorPage } from './pages/ErrorPage';
 
 export const router = createBrowserRouter([
@@ -26,22 +20,7 @@ export const router = createBrowserRouter([
       { path: 'contato', Component: Contato },
     ],
   },
-  {
-    path: '/admin',
-    Component: Login,
-    ErrorBoundary: RouteErrorPage,
-  },
-  {
-    path: '/admin/dashboard',
-    Component: AdminLayout,
-    ErrorBoundary: RouteErrorPage,
-    children: [
-      { index: true, Component: Dashboard },
-      { path: 'movimentacoes', Component: Movimentacoes },
-      { path: 'registrar', Component: Registrar },
-      { path: 'movimentacoes/:id', Component: Detalhes },
-    ],
-  },
+  
   {
     path: '*',
     Component: NotFoundPage,
