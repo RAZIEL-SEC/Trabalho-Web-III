@@ -77,14 +77,14 @@ sudo journalctl -u trabalho-web-iii-backup.service -n 100 --no-pager
 ## 4. Recuperação completa em uma VPS nova
 
 1. Instale Docker Engine e Docker Compose.
-2. Obtenha uma cópia confiável do repositório contendo scripts/backup_manager.py e instale as dependências Python (argon2-cffi e cryptography) em um ambiente virtual.
+2. Obtenha uma cópia confiável do repositório em um diretório separado (por exemplo, /opt/backup-bootstrap), contendo scripts/backup_manager.py. Instale argon2-cffi e cryptography no Python que executará o restaurador.
 3. Baixe o arquivo .enc do Telegram. Se ele tiver partes, concatene-as em ordem:
 
 ~~~bash
 cat trabalho-web-iii_*.enc.part* > trabalho-web-iii.enc
 ~~~
 
-4. Instale as dependências do projeto (ou ao menos argon2-cffi e cryptography) no Python que executará o restaurador. Disponibilize BACKUP_PASSPHRASE no ambiente sem colocá-la no histórico do terminal.
+4. Disponibilize BACKUP_PASSPHRASE no ambiente sem colocá-la no histórico do terminal.
 5. Execute com destino vazio:
 
 ~~~bash
