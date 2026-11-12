@@ -1,10 +1,10 @@
 import { createBrowserRouter } from 'react-router';
 import PublicLayout from './layouts/PublicLayout';
-import Home from './pages/public/Home';
-import QuemSomos from './pages/public/QuemSomos';
-import NossasAcoes from './pages/public/NossasAcoes';
-import ComoAjudar from './pages/public/ComoAjudar';
-import Contato from './pages/public/Contato';
+import Home from './pages/public/home';
+import QuemSomos from './pages/public/quemSomos';
+import NossasAcoes from './pages/public/nossasAcoes';
+import ComoAjudar from './pages/public/comoAjudar';
+import Contato from './pages/public/contato';
 import { NotFoundPage, RouteErrorPage } from './pages/ErrorPage';
 
 export const router = createBrowserRouter([
