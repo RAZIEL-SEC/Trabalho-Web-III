@@ -31,7 +31,7 @@ export default function Contato() {
                 <div className="w-12 h-12 bg-[#ddeeff] rounded-xl flex items-center justify-center text-2xl shrink-0"><Icon name="mail" size={24} /></div>
                 <div>
                   <h3 className="font-bold text-[#1a3a6e] mb-1">E-mail</h3>
-                  <p className="text-[#4a6080]">contato@amigosdozealgem.org.br</p>
+                  <p className="text-[#4a6080]">contato@amigosdozealguem.org.br</p>
                   <p className="text-sm text-[#4a6080]">Respondemos em até 5 dias úteis</p>
                 </div>
               </div>
