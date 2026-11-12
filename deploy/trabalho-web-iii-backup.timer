@@ -1,0 +1,11 @@
+[Unit]
+Description=Backup diário do Trabalho-Web-III
+
+[Timer]
+OnCalendar=*-*-* 03:15:00
+Persistent=true
+RandomizedDelaySec=5m
+Unit=trabalho-web-iii-backup.service
+
+[Install]
+WantedBy=timers.target

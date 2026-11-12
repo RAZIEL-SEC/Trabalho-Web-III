@@ -1,0 +1,16 @@
+[Unit]
+Description=Backup criptografado do Trabalho-Web-III para Telegram
+Wants=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+SupplementaryGroups=docker
+WorkingDirectory=/home/ubuntu/Trabalho-Web-III
+EnvironmentFile=/etc/trabalho-web-iii-backup.env
+ExecStart=/bin/bash /home/ubuntu/Trabalho-Web-III/scripts/backup.sh
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectSystem=full
