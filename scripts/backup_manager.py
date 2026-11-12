@@ -126,8 +126,9 @@ def extract_project(tar: tarfile.TarFile,target: Path):
             if m.name!=".": members.append(m)
     tar.extractall(target,members=members)
 
-def restore_db(dump: Path,project: Path,table: str|None):
+def restore_db(dump: Path,project: Path,table: str|None,stop_app: bool=False):
     if table and not TABLE.fullmatch(table): raise ValueError("Nome de tabela inválido.")
+    if stop_app: subprocess.run(["docker","compose","stop","app"],cwd=project,check=True)
     subprocess.run(["docker","compose","up","-d","db"],cwd=project,check=True)
     probe=["docker","compose","exec","-T","db","pg_isready","-U","estoque","-d","estoque"]
     for _ in range(30):
@@ -136,10 +137,13 @@ def restore_db(dump: Path,project: Path,table: str|None):
     else: raise RuntimeError("PostgreSQL não ficou pronto em 60 segundos.")
     cmd=["docker","compose","exec","-T","db","pg_restore","-U","estoque","-d","estoque","--clean","--if-exists","--no-owner","--role=estoque"]
     if table: cmd += ["--table",f"public.{table}"]
-    with dump.open("rb") as stream:
-        proc=subprocess.run(cmd,cwd=project,stdin=stream)
-    if proc.returncode: raise RuntimeError(f"pg_restore terminou com código {proc.returncode}.")
-    print("Dump restaurado no PostgreSQL.")
+    try:
+        with dump.open("rb") as stream:
+            proc=subprocess.run(cmd,cwd=project,stdin=stream)
+        if proc.returncode: raise RuntimeError(f"pg_restore terminou com código {proc.returncode}.")
+        print("Dump restaurado no PostgreSQL.")
+    finally:
+        if stop_app: subprocess.run(["docker","compose","up","-d","app"],cwd=project,check=True)
 
 def restore(args):
     password=os.getenv("BACKUP_PASSPHRASE") or getpass.getpass("Senha do backup: ")
@@ -161,7 +165,7 @@ def restore(args):
             else:
                 if not args.confirm_overwrite: raise ValueError("A restauração sobrescreve dados; informe --confirm-overwrite.")
                 if not args.project_dir: raise ValueError("Informe --project-dir para recuperação do banco.")
-                restore_db(dump,args.project_dir.resolve(),args.table)
+                restore_db(dump,args.project_dir.resolve(),args.table,stop_app=True)
 
 def main():
     p=argparse.ArgumentParser(description="Backup e recuperação do Trabalho-Web-III")
