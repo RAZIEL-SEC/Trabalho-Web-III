@@ -4,7 +4,7 @@ import Icon from '../../components/Icon';
 const socialLinks = [
   { label: 'Instagram', icon: 'instagram', href: 'https://www.instagram.com/amigosdozealguem/', external: true },
   { label: 'Facebook', icon: 'facebook', href: 'https://www.facebook.com/AmigosDoZeAlguem', external: true },
-  { label: 'Linklist', icon: 'link', href: 'https://linklist.bio/amigosdozealguem', external: true }
+  { label: 'Linklist', icon: 'linklist', href: 'https://linklist.bio/amigosdozealguem', external: true }
 ];
 
 export default function Contato() {
