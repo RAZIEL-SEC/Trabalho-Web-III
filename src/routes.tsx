@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter, redirect } from 'react-router';
 import PublicLayout from './layouts/PublicLayout';
 import Home from './pages/public/Home';
 import QuemSomos from './pages/public/QuemSomos';
@@ -18,6 +18,8 @@ export const router = createBrowserRouter([
       { path: 'nossas-acoes', Component: NossasAcoes },
       { path: 'como-ajudar', Component: ComoAjudar },
       { path: 'contato', Component: Contato },
+      // URL alternativa usada por links e acessos antigos.
+      { path: 'fale-conosco', loader: () => redirect('/contato') },
     ],
   },
   
