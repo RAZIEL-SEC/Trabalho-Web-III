@@ -4,7 +4,6 @@ sqlalchemy>=2.0
 psycopg[binary]
 pydantic-settings
 argon2-cffi
-cryptography>=42.0
 pyjwt
 python-multipart
 pytest
