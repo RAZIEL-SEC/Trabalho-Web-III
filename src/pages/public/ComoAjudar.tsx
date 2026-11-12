@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import Icon from '../../components/Icon';
 
 export default function ComoAjudar() {
@@ -103,12 +104,12 @@ export default function ComoAjudar() {
           <p className="text-[#4a6080] leading-relaxed mb-6">
             Empresas, igrejas, associações de bairro e outras organizações podem se tornar parceiras dos Amigos do Zé Alguém. Entre em contato para conhecer as possibilidades de colaboração.
           </p>
-          <a
-            href="/contato"
+          <Link
+            to="/contato"
             className="bg-[#1a3a6e] text-white font-bold px-8 py-3 rounded-md hover:bg-[#0f1f3d] transition-colors inline-block"
           >
             Fale conosco
-          </a>
+          </Link>
         </div>
       </section>
     </>
