@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import Icon from '../../components/Icon';
 import fotoArrecadacaoRoupa from '@/imports/Foto_arrecadacao_roupa.jpg';
 import fotoBalaoAmigos from '@/imports/Foto_balao_amigos_do_ze_alguem.jpg';
@@ -91,12 +92,12 @@ export default function NossasAcoes() {
         <p className="text-[#4a6080] max-w-lg mx-auto mb-8">
           Seja voluntário, doe alimentos ou contribua financeiramente. Cada gesto conta.
         </p>
-        <a
-          href="/como-ajudar"
+        <Link
+          to="/como-ajudar"
           className="bg-[#1a3a6e] text-white font-bold px-8 py-3 rounded-md hover:bg-[#0f1f3d] transition-colors inline-block"
         >
           Como ajudar
-        </a>
+        </Link>
       </section>
     </>
   );
