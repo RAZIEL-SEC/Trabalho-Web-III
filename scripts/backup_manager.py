@@ -129,15 +129,15 @@ def extract_project(tar: tarfile.TarFile,target: Path):
 def restore_db(dump: Path,project: Path,table: str|None,stop_app: bool=False):
     if table and not TABLE.fullmatch(table): raise ValueError("Nome de tabela inválido.")
     if stop_app: subprocess.run(["docker","compose","stop","app"],cwd=project,check=True)
-    subprocess.run(["docker","compose","up","-d","db"],cwd=project,check=True)
-    probe=["docker","compose","exec","-T","db","pg_isready","-U","estoque","-d","estoque"]
-    for _ in range(30):
-        if subprocess.run(probe,cwd=project,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0: break
-        time.sleep(2)
-    else: raise RuntimeError("PostgreSQL não ficou pronto em 60 segundos.")
-    cmd=["docker","compose","exec","-T","db","pg_restore","-U","estoque","-d","estoque","--clean","--if-exists","--no-owner","--role=estoque"]
-    if table: cmd += ["--table",f"public.{table}"]
     try:
+        subprocess.run(["docker","compose","up","-d","db"],cwd=project,check=True)
+        probe=["docker","compose","exec","-T","db","pg_isready","-U","estoque","-d","estoque"]
+        for _ in range(30):
+            if subprocess.run(probe,cwd=project,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0: break
+            time.sleep(2)
+        else: raise RuntimeError("PostgreSQL não ficou pronto em 60 segundos.")
+        cmd=["docker","compose","exec","-T","db","pg_restore","-U","estoque","-d","estoque","--clean","--if-exists","--no-owner","--role=estoque"]
+        if table: cmd += ["--table",f"public.{table}"]
         with dump.open("rb") as stream:
             proc=subprocess.run(cmd,cwd=project,stdin=stream)
         if proc.returncode: raise RuntimeError(f"pg_restore terminou com código {proc.returncode}.")
