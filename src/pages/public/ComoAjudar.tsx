@@ -59,6 +59,14 @@ export default function ComoAjudar() {
               <p className="text-sm text-white/60">
                 Não realizamos transações financeiras por esta plataforma. Entre em contato pelo e-mail ou WhatsApp para mais informações sobre como fazer sua doação financeira com segurança.
               </p>
+              <a
+                href="https://drive.google.com/drive/u/1/folders/17BNYxnSaEOyPkF7bIucccTsLdbcGtSAx"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex mt-5 rounded-md border border-white/60 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-white/10"
+              >
+                Ver prestação de contas
+              </a>
             </div>
           </div>
         </div>
