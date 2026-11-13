@@ -17,8 +17,7 @@ async function carregarClassificacoes(){
 }
 function atualizarSubgrupos(){
  const id=Number(grupoSelect.value),lista=subgruposDoGrupo(id);
- subgrupoSelect.replaceChildren(new Option(lista.length?"Selecione o subgrupo":"Classificar diretamente no grupo", ""));
- subgrupoSelect.disabled=!id||!lista.length;subgrupoSelect.required=!!id&&lista.length>0;
+ subgrupoSelect.replaceChildren(new Option("Classificar diretamente no grupo","grupo"));\n lista.forEach(s=>subgrupoSelect.add(new Option(s.nome,String(s.id))));\n subgrupoSelect.disabled=!id;subgrupoSelect.required=false;
 }
 function atualizarFiltroSubgrupos(){
  const id=Number(filtroGrupo.value);filtroSubgrupo.replaceChildren(new Option("Todos os subgrupos",""));
@@ -38,7 +37,7 @@ function renderizarItens(){
   tr.append(cell(i.nome),cell(c.grupo),cell(c.subgrupo),cell(nomeUnidade(i.unidade)),cell(Number(i.saldo).toLocaleString("pt-BR",{minimumFractionDigits:2})),cell(i.criado_em?new Date(i.criado_em).toLocaleDateString("pt-BR"):"—"));
   const situacao=cell(""),tag=document.createElement("span");tag.className="pill ativo";tag.textContent="Ativo";situacao.append(tag);tr.append(situacao);
   const acoes=cell(""),seletor=document.createElement("select");seletor.setAttribute("aria-label",`Classificação de ${i.nome}`);
-  grupos.forEach(g=>{const lista=subgruposDoGrupo(g.id);if(!lista.length){seletor.add(new Option(g.nome+" (grupo)", "grupo:"+g.id));}else lista.forEach(s=>seletor.add(new Option(g.nome+" / "+s.nome,"subgrupo:"+s.id)))});
+  grupos.forEach(g=>{seletor.add(new Option(g.nome+" (somente grupo)", "grupo:"+g.id));subgruposDoGrupo(g.id).forEach(s=>seletor.add(new Option(g.nome+" / "+s.nome,"subgrupo:"+s.id)))});
   const atualSub=c.s?.nome==="Sem subgrupo"?"grupo:"+c.g?.id:"subgrupo:"+i.subgrupo_id;seletor.value=atualSub;
   const salvar=document.createElement("button");salvar.type="button";salvar.className="button button-outline";salvar.textContent="Salvar classificação";
   salvar.addEventListener("click",async()=>{salvar.disabled=true;try{const [tipo,id]=seletor.value.split(":");const payload=tipo==="grupo"?{grupo_id:Number(id)}:{subgrupo_id:Number(id)};const resp=await apiFetch(`/itens/${i.id}/classificacao`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}),d=await resp.json().catch(()=>({}));if(!resp.ok)throw Error(typeof d.detail==="string"?d.detail:"Não foi possível reclassificar.");feedback(`Classificação de "${i.nome}" atualizada.`);await carregar()}catch(e){feedback(e.message,"error");salvar.disabled=false}});
@@ -53,7 +52,7 @@ async function excluir(item,botao){
 grupoSelect.addEventListener("change",atualizarSubgrupos);filtroGrupo.addEventListener("change",atualizarFiltroSubgrupos);filtroSubgrupo.addEventListener("change",renderizarItens);busca.addEventListener("input",renderizarItens);ordenacao.addEventListener("change",renderizarItens);
 form.addEventListener("submit",async e=>{
  e.preventDefault();const b=form.querySelector('button[type="submit"]');b.disabled=true;
- try{const dados=Object.fromEntries(new FormData(form));const grupoId=Number(grupoSelect.value),lista=subgruposDoGrupo(grupoId);dados.grupo_id=grupoId;if(lista.length){if(!dados.subgrupo_id)throw Error("Selecione um subgrupo.");dados.subgrupo_id=Number(dados.subgrupo_id)}else delete dados.subgrupo_id;
+ try{const dados=Object.fromEntries(new FormData(form));const grupoId=Number(grupoSelect.value);dados.grupo_id=grupoId;if(dados.subgrupo_id==="grupo"||!dados.subgrupo_id)delete dados.subgrupo_id;else dados.subgrupo_id=Number(dados.subgrupo_id);
   const r=await apiFetch("/itens",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(dados)}),d=await r.json().catch(()=>({}));if(r.status===401){location.href="/estoque/login";return}if(!r.ok)throw Error(typeof d.detail==="string"?d.detail:"Confira os dados informados.");
   form.reset();atualizarSubgrupos();feedback("Item cadastrado com sucesso.");await carregarClassificacoes();await carregar();
  }catch(e){feedback(e.message,"error")}finally{b.disabled=false}
