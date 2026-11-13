@@ -60,7 +60,7 @@ dessa permissão faz os testes falharem, sem recorrer às tabelas públicas.
 | Cookie do login | `HttpOnly`, `SameSite=strict`, `Path=/`. |
 | Senha incorreta | Login `401`; as duas rotas continuam protegidas. |
 | Cookie inválido ou usuário desativado após o login | As duas rotas retornam `401`. |
-| Cadastro com cada unidade (`kg`, `un`, `l`, `pacote`) | `201`; dados recarregados do PostgreSQL. |
+| Cadastro com as unidades (`kg`, `g`, `un`, `l`, `ml`, `pacote`, `garrafa`, `frasco`, `lata`, `caixa`, `fardo`, `kit`, `par`, `rolo`, `duzia`, `bandeja`, `saco`, `galao`) | `201`; dados recarregados do PostgreSQL. |
 | Valores definidos pelo servidor | Saldo `Decimal("0.00")`, ativo e `criado_por` do usuário autenticado. |
 | Troca de usuário pelo login real | O novo item pertence ao segundo usuário autenticado, sem id de autor fixo. |
 | Nome com espaços nas extremidades | Espaços removidos antes de persistir. |
