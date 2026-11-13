@@ -9,12 +9,13 @@ from sqlalchemy.orm import Session
 
 from app.core.csrf import validar_requisicao_csrf
 from app.core.deps import get_db
-from app.routers import auth, itens, movimentacoes, usuarios
+from app.routers import auth, classificacoes, itens, movimentacoes, usuarios
 
 app = FastAPI(title="Estoque - Amigos do Zé Alguém")
 app.include_router(auth.router)
 app.include_router(usuarios.router)
 app.include_router(itens.router)
+app.include_router(classificacoes.router)
 app.include_router(movimentacoes.router)
 
 
