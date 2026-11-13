@@ -85,7 +85,7 @@ def test_usuario_inativo_perde_acesso(
     assert quantidade_itens(db) == 0
 
 
-@pytest.mark.parametrize("unidade", ["kg", "un", "l", "pacote"])
+@pytest.mark.parametrize("unidade", ["kg","g","un","l","ml","pacote","garrafa","frasco","lata","caixa","fardo","kit","par","rolo","duzia","bandeja","saco","galao"])
 def test_cadastro_persiste_dados_e_defaults(
     client_autenticado: TestClient, db: Session, usuario: Usuario, unidade: str
 ):
