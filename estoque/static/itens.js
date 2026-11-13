@@ -1,4 +1,25 @@
 const form=document.getElementById("form-item"),msg=document.getElementById("item-msg"),corpo=document.getElementById("itens-lista");
+const rotulosUnidade={
+  "kg": "Quilograma (kg)",
+  "g": "Grama (g)",
+  "un": "Unidade (un)",
+  "l": "Litro (L)",
+  "ml": "Mililitro (ml)",
+  "pacote": "Pacote",
+  "garrafa": "Garrafa",
+  "frasco": "Frasco",
+  "lata": "Lata",
+  "caixa": "Caixa",
+  "fardo": "Fardo",
+  "kit": "Kit",
+  "par": "Par",
+  "rolo": "Rolo",
+  "duzia": "Dúzia",
+  "bandeja": "Bandeja",
+  "saco": "Saco",
+  "galao": "Galão"
+};
+function nomeUnidade(codigo){return rotulosUnidade[codigo]||codigo||"—"}
 function cell(t){const e=document.createElement("td");e.textContent=t??"—";return e}
 function feedback(t,s="success"){msg.textContent=t;msg.className="feedback "+s}
 async function carregar(){
@@ -11,7 +32,7 @@ async function carregar(){
     if(!itens.length){const tr=document.createElement("tr"),td=cell("Nenhum item ativo cadastrado.");td.colSpan=5;td.className="empty";tr.append(td);corpo.append(tr);return}
     for(const i of itens){
       const tr=document.createElement("tr");
-      tr.append(cell(i.nome),cell(i.unidade),cell(Number(i.saldo).toLocaleString("pt-BR",{minimumFractionDigits:2})));
+      tr.append(cell(i.nome),cell(nomeUnidade(i.unidade)),cell(Number(i.saldo).toLocaleString("pt-BR",{minimumFractionDigits:2})));
       const situacao=cell(""),tag=document.createElement("span");tag.className="pill ativo";tag.textContent="Ativo";situacao.append(tag);tr.append(situacao);
       const acoes=cell(""),botao=document.createElement("button");botao.type="button";botao.className="button button-danger";botao.textContent="Excluir";botao.setAttribute("aria-label",`Excluir ${i.nome}`);
       botao.addEventListener("click",()=>excluir(i,botao));acoes.append(botao);tr.append(acoes);corpo.append(tr);
