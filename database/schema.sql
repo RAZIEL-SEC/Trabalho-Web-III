@@ -11,7 +11,8 @@ CREATE TABLE usuarios (
     -- sobe a cada troca de senha, desativação ou "sair de todos os dispositivos":
     -- cookies emitidos com uma versão antiga deixam de valer
     token_versao INTEGER NOT NULL DEFAULT 0,
-    criado_em   TIMESTAMPTZ NOT NULL DEFAULT now()
+    criado_em   TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CONSTRAINT fk_itens_subgrupo FOREIGN KEY (subgrupo_id) REFERENCES subgrupos_itens(id)
 );
 
 CREATE TABLE grupos_itens (
@@ -37,7 +38,7 @@ SELECT id, 'Sem classificação' FROM grupos_itens WHERE nome = 'Sem classifica�
 CREATE TABLE itens (
     id          SERIAL PRIMARY KEY,
     nome        VARCHAR(100) NOT NULL,
-    subgrupo_id INTEGER NOT NULL REFERENCES subgrupos_itens(id) DEFAULT 1,
+    subgrupo_id INTEGER NOT NULL DEFAULT 1,
     unidade     VARCHAR(10) NOT NULL CHECK (unidade IN ('kg', 'g', 'un', 'l', 'ml', 'pacote', 'garrafa', 'frasco', 'lata', 'caixa', 'fardo', 'kit', 'par', 'rolo', 'duzia', 'bandeja', 'saco', 'galao')),
     saldo       NUMERIC(10,2) NOT NULL DEFAULT 0 CHECK (saldo >= 0),
     ativo       BOOLEAN NOT NULL DEFAULT TRUE,
