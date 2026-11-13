@@ -19,10 +19,12 @@ class ItemIn(BaseModel):
     nome: str = Field(min_length=1, max_length=100)
     unidade: Literal["kg", "g", "un", "l", "ml", "pacote", "garrafa", "frasco", "lata", "caixa", "fardo", "kit", "par", "rolo", "duzia", "bandeja", "saco", "galao"]
     subgrupo_id: int | None = Field(default=None, gt=0)
+    grupo_id: int | None = Field(default=None, gt=0)
 
 class ItemClassificacaoIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    subgrupo_id: int = Field(gt=0)
+    subgrupo_id: int | None = Field(default=None, gt=0)
+    grupo_id: int | None = Field(default=None, gt=0)
 
 class ItemOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -35,17 +37,46 @@ class ItemOut(BaseModel):
     criado_por: int
     criado_em: datetime
 
+def _subgrupo_padrao_do_grupo(db: Session, grupo_id: int) -> SubgrupoItem:
+    grupo = db.scalar(select(GrupoItem).where(GrupoItem.id == grupo_id).with_for_update())
+    if not grupo or not grupo.ativo:
+        raise HTTPException(422, "Selecione um grupo ativo.")
+    subgrupo = db.scalar(select(SubgrupoItem).where(
+        SubgrupoItem.grupo_id == grupo_id,
+        SubgrupoItem.nome == "Sem subgrupo",
+        SubgrupoItem.ativo.is_(True),
+    ))
+    if subgrupo is None:
+        subgrupo = SubgrupoItem(nome="Sem subgrupo", grupo_id=grupo_id)
+        db.add(subgrupo)
+        db.flush()
+    return subgrupo
+
+def _resolver_classificacao(db: Session, subgrupo_id: int | None, grupo_id: int | None) -> SubgrupoItem:
+    if subgrupo_id is not None:
+        subgrupo = db.get(SubgrupoItem, subgrupo_id)
+        grupo = db.get(GrupoItem, subgrupo.grupo_id) if subgrupo else None
+        if not subgrupo or not subgrupo.ativo or not grupo or not grupo.ativo:
+            raise HTTPException(422, "Selecione um subgrupo ativo.")
+        if grupo_id is not None and grupo.id != grupo_id:
+            raise HTTPException(422, "O subgrupo selecionado não pertence ao grupo informado.")
+        return subgrupo
+    if grupo_id is not None:
+        return _subgrupo_padrao_do_grupo(db, grupo_id)
+    # Compatibilidade com cadastros antigos que não enviam classificação.
+    subgrupo = db.scalar(select(SubgrupoItem).join(GrupoItem).where(
+        SubgrupoItem.nome == "Sem classificação",
+        GrupoItem.nome == "Sem classificação",
+        SubgrupoItem.ativo.is_(True),
+        GrupoItem.ativo.is_(True),
+    ))
+    if subgrupo is None:
+        raise HTTPException(422, "Selecione um grupo ou subgrupo ativo.")
+    return subgrupo
+
 @router.post("", response_model=ItemOut, status_code=status.HTTP_201_CREATED)
 def cadastrar_item(dados: ItemIn, db: Session = Depends(get_db), usuario: Usuario = Depends(get_usuario_atual)):
-    subgrupo_id = dados.subgrupo_id
-    if subgrupo_id is None:
-        subgrupo_id = db.scalar(select(SubgrupoItem.id).join(GrupoItem).where(
-            SubgrupoItem.nome == "Sem classificação", GrupoItem.nome == "Sem classificação",
-            SubgrupoItem.ativo.is_(True), GrupoItem.ativo.is_(True)))
-    subgrupo = db.get(SubgrupoItem, subgrupo_id) if subgrupo_id else None
-    grupo = db.get(GrupoItem, subgrupo.grupo_id) if subgrupo else None
-    if not subgrupo or not subgrupo.ativo or not grupo or not grupo.ativo:
-        raise HTTPException(422, "Selecione um subgrupo ativo.")
+    subgrupo = _resolver_classificacao(db, dados.subgrupo_id, dados.grupo_id)
     item = Item(nome=dados.nome, unidade=dados.unidade, subgrupo_id=subgrupo.id, criado_por=usuario.id)
     db.add(item)
     try:
@@ -75,13 +106,12 @@ def excluir_item(item_id: int, db: Session = Depends(get_db), _usuario: Usuario 
 
 @router.patch("/{item_id}/classificacao", response_model=ItemOut)
 def reclassificar_item(item_id: int, dados: ItemClassificacaoIn, db: Session = Depends(get_db), _usuario: Usuario = Depends(get_usuario_atual)):
+    if dados.subgrupo_id is None and dados.grupo_id is None:
+        raise HTTPException(422, "Informe um grupo ou subgrupo.")
     item = db.scalar(select(Item).where(Item.id == item_id).with_for_update())
     if item is None or not item.ativo:
         raise HTTPException(404, "Item não encontrado.")
-    subgrupo = db.get(SubgrupoItem, dados.subgrupo_id)
-    grupo = db.get(GrupoItem, subgrupo.grupo_id) if subgrupo else None
-    if not subgrupo or not subgrupo.ativo or not grupo or not grupo.ativo:
-        raise HTTPException(422, "Selecione um subgrupo ativo.")
+    subgrupo = _resolver_classificacao(db, dados.subgrupo_id, dados.grupo_id)
     item.subgrupo_id = subgrupo.id
     db.commit()
     db.refresh(item)
