@@ -64,7 +64,7 @@ def cadastrar_item(
         if getattr(erro.orig, "sqlstate", None) == "23505":
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="Já existe um item com esse nome e unidade.",
+                detail="Já existe um item ativo com esse nome e unidade.",
             ) from erro
 
         raise
