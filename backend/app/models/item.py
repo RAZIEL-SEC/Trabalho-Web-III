@@ -14,7 +14,7 @@ class Item(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     nome: Mapped[str] = mapped_column(String(100))
     unidade: Mapped[str] = mapped_column(String(10))
-    subgrupo_id: Mapped[int] = mapped_column(ForeignKey("subgrupos_itens.id"))
+    subgrupo_id: Mapped[int] = mapped_column(ForeignKey("subgrupos_itens.id"), server_default=text("1"))
     saldo: Mapped[Decimal] = mapped_column(Numeric(10, 2), server_default=text("0"))
     ativo: Mapped[bool] = mapped_column(Boolean, server_default=text("true"))
     criado_por: Mapped[int] = mapped_column()
