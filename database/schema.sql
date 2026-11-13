@@ -22,9 +22,14 @@ CREATE TABLE itens (
     ativo       BOOLEAN NOT NULL DEFAULT TRUE,
     -- ID histórico do criador; intencionalmente sem FK para usuarios.
     criado_por  INTEGER NOT NULL,
-    criado_em   TIMESTAMPTZ NOT NULL DEFAULT now(),
-    UNIQUE (nome, unidade)
+    criado_em   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Só itens ativos precisam ter nome e unidade exclusivos.
+-- Itens inativos permanecem para preservar o histórico de movimentações.
+CREATE UNIQUE INDEX uq_itens_nome_unidade_ativos
+    ON itens (nome, unidade)
+    WHERE ativo IS TRUE;
 
 CREATE TABLE movimentacoes (
     id          BIGSERIAL PRIMARY KEY,
