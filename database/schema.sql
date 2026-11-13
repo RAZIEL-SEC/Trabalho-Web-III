@@ -17,7 +17,7 @@ CREATE TABLE usuarios (
 CREATE TABLE itens (
     id          SERIAL PRIMARY KEY,
     nome        VARCHAR(100) NOT NULL,
-    unidade     VARCHAR(10) NOT NULL CHECK (unidade IN ('kg', 'un', 'l', 'pacote')),
+    unidade     VARCHAR(10) NOT NULL CHECK (unidade IN ('kg', 'g', 'un', 'l', 'ml', 'pacote', 'garrafa', 'frasco', 'lata', 'caixa', 'fardo', 'kit', 'par', 'rolo', 'duzia', 'bandeja', 'saco', 'galao')),
     saldo       NUMERIC(10,2) NOT NULL DEFAULT 0 CHECK (saldo >= 0),
     ativo       BOOLEAN NOT NULL DEFAULT TRUE,
     -- ID histórico do criador; intencionalmente sem FK para usuarios.
