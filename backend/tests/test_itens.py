@@ -200,7 +200,7 @@ def test_mesmo_nome_com_unidades_diferentes_e_permitido(
         pytest.param({"unidade": "kg"}, id="nome-ausente"),
         pytest.param({"nome": "Arroz"}, id="unidade-ausente"),
         pytest.param({"nome": "Arroz", "unidade": None}, id="unidade-nula"),
-        pytest.param({"nome": "Arroz", "unidade": "caixa"}, id="unidade-invalida"),
+        pytest.param({"nome": "Arroz", "unidade": "metro"}, id="unidade-invalida"),
         pytest.param({"nome": "Arroz", "unidade": "KG"}, id="unidade-maiuscula"),
         *[
             pytest.param(
