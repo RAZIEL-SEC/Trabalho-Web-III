@@ -11,8 +11,7 @@ CREATE TABLE usuarios (
     -- sobe a cada troca de senha, desativação ou "sair de todos os dispositivos":
     -- cookies emitidos com uma versão antiga deixam de valer
     token_versao INTEGER NOT NULL DEFAULT 0,
-    criado_em   TIMESTAMPTZ NOT NULL DEFAULT now(),
-    CONSTRAINT fk_itens_subgrupo FOREIGN KEY (subgrupo_id) REFERENCES subgrupos_itens(id)
+    criado_em   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE grupos_itens (
@@ -44,7 +43,8 @@ CREATE TABLE itens (
     ativo       BOOLEAN NOT NULL DEFAULT TRUE,
     -- ID histórico do criador; intencionalmente sem FK para usuarios.
     criado_por  INTEGER NOT NULL,
-    criado_em   TIMESTAMPTZ NOT NULL DEFAULT now()
+    criado_em   TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CONSTRAINT fk_itens_subgrupo FOREIGN KEY (subgrupo_id) REFERENCES subgrupos_itens(id)
 );
 
 -- Só itens ativos precisam ter nome e unidade exclusivos.
