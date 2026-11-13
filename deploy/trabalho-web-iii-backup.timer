@@ -1,10 +1,11 @@
 [Unit]
-Description=Backup diário do Trabalho-Web-III
+Description=Backup do sistema a cada 8 horas
 
 [Timer]
 OnCalendar=*-*-* 03:15:00
+OnCalendar=*-*-* 11:15:00
+OnCalendar=*-*-* 19:15:00
 Persistent=true
-RandomizedDelaySec=5m
 Unit=trabalho-web-iii-backup.service
 
 [Install]
