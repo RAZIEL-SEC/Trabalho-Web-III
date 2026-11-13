@@ -24,3 +24,13 @@ def test_nao_desativa_subgrupo_com_itens_ativos(client_autenticado: TestClient):
     assert item.status_code == 201
     response = client_autenticado.delete(f"/classificacoes/subgrupos/{subgrupo['id']}")
     assert response.status_code == 409
+
+def test_reclassificar_item_existente(client_autenticado: TestClient):
+    grupo_a = client_autenticado.post("/classificacoes/grupos", json={"nome": "Alimentação"}).json()
+    sub_a = client_autenticado.post("/classificacoes/subgrupos", json={"nome": "Grãos", "grupo_id": grupo_a["id"]}).json()
+    grupo_b = client_autenticado.post("/classificacoes/grupos", json={"nome": "Higiene"}).json()
+    sub_b = client_autenticado.post("/classificacoes/subgrupos", json={"nome": "Limpeza", "grupo_id": grupo_b["id"]}).json()
+    item = client_autenticado.post("/itens", json={"nome": "Arroz", "unidade": "kg", "subgrupo_id": sub_a["id"]}).json()
+    resposta = client_autenticado.patch(f"/itens/{item['id']}/classificacao", json={"subgrupo_id": sub_b["id"]})
+    assert resposta.status_code == 200
+    assert resposta.json()["subgrupo_id"] == sub_b["id"]
