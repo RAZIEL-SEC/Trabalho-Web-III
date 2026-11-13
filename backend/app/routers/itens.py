@@ -23,7 +23,7 @@ class ItemIn(BaseModel):
     )
 
     nome: str = Field(min_length=1, max_length=100)
-    unidade: Literal["kg", "un", "l", "pacote"]
+    unidade: Literal["kg", "g", "un", "l", "ml", "pacote", "garrafa", "frasco", "lata", "caixa", "fardo", "kit", "par", "rolo", "duzia", "bandeja", "saco", "galao"]
 
 
 class ItemOut(BaseModel):
