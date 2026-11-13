@@ -54,7 +54,7 @@ PASTA_ESTOQUE = Path(__file__).resolve().parents[2] / "estoque"
 class PainelStaticFiles(StaticFiles):
     async def get_response(self, path: str, scope):
         if path.endswith(".html"):
-            destino = "/" if path == "index.html" else f"/estoque/{path[:-5]}"
+            destino = "/estoque/" if path == "index.html" else f"/estoque/{path[:-5]}"
             query = scope.get("query_string", b"").decode("latin-1")
             if query:
                 destino = f"{destino}?{query}"
