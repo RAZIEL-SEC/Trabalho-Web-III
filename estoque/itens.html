@@ -7,180 +7,62 @@
     <link rel="icon" type="image/svg+xml" href="/estoque/static/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet" />
     <title>Itens · Amigos do Zé Alguém</title>
     <link rel="stylesheet" href="static/app.css" />
   </head>
   <body>
     <div class="layout">
       <aside class="sidebar">
-        <a
-          class="brand"
-          href="/estoque/"
-          aria-label="Amigos do Zé Alguém - início"
-          ><span class="brand-mark"
-            ><img
-              class="logo-imagem"
-              src="/estoque/static/logo.svg"
-              alt="Amigos do Zé Alguém"
-              fetchpriority="high" /></span
-        ></a>
+        <a class="brand" href="/estoque/" aria-label="Amigos do Zé Alguém - início"><span class="brand-mark"><img class="logo-imagem" src="/estoque/static/logo.svg" alt="Amigos do Zé Alguém" fetchpriority="high" /></span></a>
         <nav class="menu">
-          <a href="/estoque/"
-            ><span class="material-symbols-outlined" aria-hidden="true"
-              >dashboard</span
-            >Visão geral</a
-          ><a class="active" href="/estoque/itens"
-            ><span class="material-symbols-outlined" aria-hidden="true"
-              >inventory_2</span
-            >Itens</a
-          ><a href="/estoque/categorias"><span class="material-symbols-outlined" aria-hidden="true">category</span>Grupos e subgrupos</a><a href="/estoque/movimentacoes"
-            ><span class="material-symbols-outlined" aria-hidden="true"
-              >swap_vert</span
-            >Movimentações</a
-          ><a href="/estoque/historico"
-            ><span class="material-symbols-outlined" aria-hidden="true"
-              >history</span
-            >Histórico</a
-          ><a href="/estoque/usuarios" data-so-admin hidden
-            ><span class="material-symbols-outlined" aria-hidden="true"
-              >group</span
-            >Usuários</a
-          >
+          <a href="/estoque/"><span class="material-symbols-outlined" aria-hidden="true">dashboard</span>Visão geral</a>
+          <a class="active" href="/estoque/itens"><span class="material-symbols-outlined" aria-hidden="true">inventory_2</span>Itens</a>
+          <a href="/estoque/categorias"><span class="material-symbols-outlined" aria-hidden="true">category</span>Grupos e subgrupos</a>
+          <a href="/estoque/movimentacoes"><span class="material-symbols-outlined" aria-hidden="true">swap_vert</span>Movimentações</a>
+          <a href="/estoque/historico"><span class="material-symbols-outlined" aria-hidden="true">history</span>Histórico</a>
+          <a href="/estoque/usuarios" data-so-admin hidden><span class="material-symbols-outlined" aria-hidden="true">group</span>Usuários</a>
         </nav>
         <div class="side-bottom">
-          <div class="appearance-picker">
-            <label for="appearance-mode"
-              ><span class="material-symbols-outlined" aria-hidden="true"
-                >contrast</span
-              >Aparência</label
-            ><select
-              id="appearance-mode"
-              data-theme-picker
-              aria-label="Escolher modo de aparência"
-            >
-              <option value="light">Claro</option>
-              <option value="dark">Escuro</option>
-              <option value="system">Sistema</option>
-            </select>
-          </div>
-          <button class="button button-quiet" data-sair>
-            <span class="material-symbols-outlined" aria-hidden="true"
-              >logout</span
-            >Sair da conta
-          </button>
+          <div class="appearance-picker"><label for="appearance-mode"><span class="material-symbols-outlined" aria-hidden="true">contrast</span>Aparência</label><select id="appearance-mode" data-theme-picker aria-label="Escolher modo de aparência"><option value="light">Claro</option><option value="dark">Escuro</option><option value="system">Sistema</option></select></div>
+          <button class="button button-quiet" data-sair><span class="material-symbols-outlined" aria-hidden="true">logout</span>Sair da conta</button>
         </div>
       </aside>
       <main class="main">
-        <header class="topbar">
-          <div>
-            <p class="eyebrow">CADASTRO</p>
-            <h1>Itens do estoque</h1>
-          </div>
-          <div class="user-chip">Gestão de itens</div>
-        </header>
+        <header class="topbar"><div><p class="eyebrow">CADASTRO</p><h1>Itens do estoque</h1></div><div class="user-chip">Gestão de itens</div></header>
         <section class="panel">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">NOVO REGISTRO</p>
-              <h2>
-                <span class="material-symbols-outlined" aria-hidden="true"
-                  >add_circle</span
-                >Cadastrar item
-              </h2>
-            </div>
-          </div>
+          <div class="section-head"><div><p class="eyebrow">NOVO REGISTRO</p><h2><span class="material-symbols-outlined" aria-hidden="true">add_circle</span>Cadastrar item</h2></div></div>
           <form id="form-item" class="form-grid">
-            <label
-              >Nome do item<input
-                name="nome"
-                required
-                maxlength="100"
-                placeholder="Ex.: Arroz"
-            /></label>
+            <label>Nome do item<input name="nome" required maxlength="100" placeholder="Ex.: Arroz" /></label>
             <label>Grupo<select id="item-grupo" required><option value="">Selecione o grupo</option></select></label>
-            <label>Subgrupo<select name="subgrupo_id" id="item-subgrupo" required><option value="">Selecione o subgrupo</option></select></label>
-            <label
-              >Unidade<select name="unidade" required>
-                <option value="">Selecione</option>
-                <option value="kg">Quilograma (kg)</option>
-                <option value="g">Grama (g)</option>
-                <option value="un">Unidade (un)</option>
-                <option value="l">Litro (L)</option>
-                <option value="ml">Mililitro (ml)</option>
-                <option value="pacote">Pacote</option>
-                <option value="garrafa">Garrafa</option>
-                <option value="frasco">Frasco</option>
-                <option value="lata">Lata</option>
-                <option value="caixa">Caixa</option>
-                <option value="fardo">Fardo</option>
-                <option value="kit">Kit</option>
-                <option value="par">Par</option>
-                <option value="rolo">Rolo</option>
-                <option value="duzia">Dúzia</option>
-                <option value="bandeja">Bandeja</option>
-                <option value="saco">Saco</option>
-                <option value="galao">Galão</option>
-              </select></label
-            >
-            <div class="form-actions">
-              <button class="button" type="submit">
-                <span class="material-symbols-outlined" aria-hidden="true"
-                  >add_circle</span
-                >Cadastrar item
-              </button>
-            </div>
+            <label>Subgrupo<select name="subgrupo_id" id="item-subgrupo"><option value="">Selecione o subgrupo</option></select><small class="muted">Se o grupo não tiver subgrupos, o item será classificado diretamente nele.</small></label>
+            <label>Unidade<select name="unidade" required>
+              <option value="">Selecione</option><option value="kg">Quilograma (kg)</option><option value="g">Grama (g)</option><option value="un">Unidade (un)</option><option value="l">Litro (L)</option><option value="ml">Mililitro (ml)</option><option value="pacote">Pacote</option><option value="garrafa">Garrafa</option><option value="frasco">Frasco</option><option value="lata">Lata</option><option value="caixa">Caixa</option><option value="fardo">Fardo</option><option value="kit">Kit</option><option value="par">Par</option><option value="rolo">Rolo</option><option value="duzia">Dúzia</option><option value="bandeja">Bandeja</option><option value="saco">Saco</option><option value="galao">Galão</option>
+            </select></label>
+            <div class="form-actions"><button class="button" type="submit"><span class="material-symbols-outlined" aria-hidden="true">add_circle</span>Cadastrar item</button></div>
             <p id="item-msg" class="feedback" role="status"></p>
           </form>
         </section>
         <section class="panel">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">INVENTÁRIO</p>
-              <h2>Itens cadastrados</h2>
-              <p class="muted">
-                Excluir remove o item da lista ativa, mas mantém o histórico de
-                movimentações.
-              </p>
-            </div>
-            <button
-              class="button button-outline"
-              id="atualizar-itens"
-              type="button"
-            >
-              <span class="material-symbols-outlined" aria-hidden="true"
-                >refresh</span
-              >Atualizar lista
-            </button>
+          <div class="section-head"><div><p class="eyebrow">INVENTÁRIO</p><h2>Itens cadastrados</h2><p class="muted">Pesquise, filtre e ordene os itens. Excluir remove da lista ativa, mas preserva o histórico.</p></div>
+            <button class="button button-outline" id="atualizar-itens" type="button"><span class="material-symbols-outlined" aria-hidden="true">refresh</span>Atualizar lista</button>
           </div>
-          <div class="form-grid" style="margin-bottom:16px"><label>Filtrar por grupo<select id="filtro-grupo"><option value="">Todos os grupos</option></select></label><label>Filtrar por subgrupo<select id="filtro-subgrupo"><option value="">Todos os subgrupos</option></select></label></div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>Grupo</th><th>Subgrupo</th><th>Unidade</th>
-                  <th>Saldo</th>
-                  <th>Situação</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="itens-lista">
-                <tr>
-                  <td colspan="7" class="empty">Carregando…</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="form-grid" style="margin-bottom:16px">
+            <label>Pesquisar item<input id="busca-itens" type="search" placeholder="Digite nome, grupo, subgrupo ou unidade..." /></label>
+            <label>Ordenar por<select id="ordenar-itens"><option value="nome-asc">Nome (A–Z)</option><option value="nome-desc">Nome (Z–A)</option><option value="saldo-asc">Menor saldo</option><option value="saldo-desc">Maior saldo</option><option value="data-desc">Mais recentes</option><option value="data-asc">Mais antigos</option></select></label>
+            <label>Filtrar por grupo<select id="filtro-grupo"><option value="">Todos os grupos</option></select></label>
+            <label>Filtrar por subgrupo<select id="filtro-subgrupo"><option value="">Todos os subgrupos</option></select></label>
           </div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Item</th><th>Grupo</th><th>Subgrupo</th><th>Unidade</th><th>Saldo</th><th>Cadastro</th><th>Situação</th><th>Ações</th></tr></thead>
+            <tbody id="itens-lista"><tr><td colspan="8" class="empty">Carregando…</td></tr></tbody>
+          </table></div>
         </section>
       </main>
     </div>
     <script src="static/theme.js"></script>
     <script src="static/brand.js"></script>
     <script src="static/auth.js"></script>
-    <script src="static/itens.js?v=20261113-3"></script>
+    <script src="static/itens.js?v=20261113-4"></script>
   </body>
 </html>
