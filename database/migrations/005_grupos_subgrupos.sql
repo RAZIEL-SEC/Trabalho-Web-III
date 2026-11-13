@@ -13,10 +13,10 @@ CREATE TABLE IF NOT EXISTS subgrupos_itens (
     CONSTRAINT uq_subgrupos_grupo_nome UNIQUE (grupo_id, nome)
 );
 INSERT INTO grupos_itens (nome) VALUES ('Sem classificação')
-ON CONFLICT (nome) DO NOTHING;
+ON CONFLICT DO NOTHING;
 INSERT INTO subgrupos_itens (grupo_id, nome)
 SELECT id, 'Sem classificação' FROM grupos_itens WHERE nome = 'Sem classificação'
-ON CONFLICT (grupo_id, nome) DO NOTHING;
+ON CONFLICT DO NOTHING;
 ALTER TABLE itens ADD COLUMN IF NOT EXISTS subgrupo_id INTEGER;
 UPDATE itens SET subgrupo_id = (
     SELECT s.id FROM subgrupos_itens s
