@@ -9,7 +9,7 @@ const entrar = document.getElementById("entrar");
 
 // Já tem sessão? Vai direto para o sistema.
 fetch("/auth/eu")
-  .then((r) => { if (r.ok) window.location.replace("itens.html"); })
+  .then((r) => { if (r.ok) window.location.replace("/estoque/itens"); })
   .catch(() => {});
 
 // Veio de uma sessão que terminou (inatividade, senha trocada, "sair de todos").
@@ -82,7 +82,7 @@ form.addEventListener("submit", async (e) => {
     });
 
     if (r.ok) {
-      window.location.href = "itens.html";
+      window.location.href = "/estoque/itens";
       return; // o botão fica em "carregando" até a página trocar
     }
 
