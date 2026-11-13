@@ -1,6 +1,6 @@
 const sessao = fetch("/auth/eu").then((r) => {
   if (r.status === 401) {
-    window.location.href = "login.html?expirou=1";
+    window.location.href = "/estoque/login?expirou=1";
     return null;
   }
   return r.json();
@@ -11,7 +11,7 @@ async function obterTokenCsrf() {
   if (!tokenCsrfPromise) {
     tokenCsrfPromise = fetch("/auth/csrf").then(async (r) => {
       if (r.status === 401) {
-        window.location.href = "login.html?expirou=1";
+        window.location.href = "/estoque/login?expirou=1";
         throw new Error("Sessão expirada.");
       }
       if (!r.ok) throw new Error("Não foi possível validar a sessão.");
@@ -41,9 +41,9 @@ sessao.then((u) => {
 
 function encerrar(url) {
   apiFetch(url, { method: "POST" }).then(() => {
-    window.location.href = "login.html";
+    window.location.href = "/estoque/login";
   }).catch(() => {
-    window.location.href = "login.html";
+    window.location.href = "/estoque/login";
   });
 }
 
