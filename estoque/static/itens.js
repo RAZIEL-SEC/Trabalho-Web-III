@@ -17,7 +17,9 @@ async function carregarClassificacoes(){
 }
 function atualizarSubgrupos(){
  const id=Number(grupoSelect.value),lista=subgruposDoGrupo(id);
- subgrupoSelect.replaceChildren(new Option("Classificar diretamente no grupo","grupo"));\n lista.forEach(s=>subgrupoSelect.add(new Option(s.nome,String(s.id))));\n subgrupoSelect.disabled=!id;subgrupoSelect.required=false;
+ subgrupoSelect.replaceChildren(new Option("Classificar diretamente no grupo","grupo"));
+ lista.forEach(s=>subgrupoSelect.add(new Option(s.nome,String(s.id))));
+ subgrupoSelect.disabled=!id;subgrupoSelect.required=false;
 }
 function atualizarFiltroSubgrupos(){
  const id=Number(filtroGrupo.value);filtroSubgrupo.replaceChildren(new Option("Todos os subgrupos",""));
