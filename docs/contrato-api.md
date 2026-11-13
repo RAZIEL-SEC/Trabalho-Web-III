@@ -77,7 +77,7 @@ O corpo aceita somente os dois campos obrigatórios:
 | Campo | Tipo | Regras |
 | --- | --- | --- |
 | `nome` | string | Remove espaços no início e no fim; deve ter de 1 a 100 caracteres após essa remoção. |
-| `unidade` | string | Somente `kg`, `un`, `l` ou `pacote`, exatamente nessa grafia. |
+| `unidade` | string | Somente `kg`, `g`, `un`, `l`, `ml`, `pacote`, `garrafa`, `frasco`, `lata`, `caixa`, `fardo`, `kit`, `par`, `rolo`, `duzia`, `bandeja`, `saco` ou `galao`, exatamente nessa grafia. |
 
 Campos extras são recusados, inclusive `saldo`, `ativo`, `criado_por`, `id`
 e `criado_em`. Nome vazio ou composto somente de espaços também é recusado.
@@ -121,9 +121,9 @@ Exemplo de resposta para `{"nome": "Arroz", "unidade": "caixa"}`:
     {
       "type": "literal_error",
       "loc": ["body", "unidade"],
-      "msg": "Input should be 'kg', 'un', 'l' or 'pacote'",
+      "msg": "Input deve corresponder a uma das unidades permitidas",
       "input": "caixa",
-      "ctx": {"expected": "'kg', 'un', 'l' or 'pacote'"}
+      "ctx": {"expected": "'kg', 'g', 'un', 'l', 'ml', 'pacote', 'garrafa', 'frasco', 'lata', 'caixa', 'fardo', 'kit', 'par', 'rolo', 'duzia', 'bandeja', 'saco', 'galao'"}
     }
   ]
 }
