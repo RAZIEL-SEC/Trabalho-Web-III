@@ -96,10 +96,11 @@ def test_cadastro_persiste_dados_e_defaults(
     assert response.status_code == 201
     dados = response.json()
     assert set(dados) == {
-        "id", "nome", "unidade", "saldo", "ativo", "criado_por", "criado_em"
+        "id", "nome", "unidade", "subgrupo_id", "saldo", "ativo", "criado_por", "criado_em"
     }
     assert dados["nome"] == "Arroz"
     assert dados["unidade"] == unidade
+    assert dados["subgrupo_id"] > 0
     assert dados["saldo"] == "0.00"
     assert dados["ativo"] is True
     assert dados["criado_por"] == usuario.id
@@ -199,7 +200,7 @@ def test_mesmo_nome_com_unidades_diferentes_e_permitido(
         pytest.param({"unidade": "kg"}, id="nome-ausente"),
         pytest.param({"nome": "Arroz"}, id="unidade-ausente"),
         pytest.param({"nome": "Arroz", "unidade": None}, id="unidade-nula"),
-        pytest.param({"nome": "Arroz", "unidade": "caixa"}, id="unidade-invalida"),
+        pytest.param({"nome": "Arroz", "unidade": "metro"}, id="unidade-invalida"),
         pytest.param({"nome": "Arroz", "unidade": "KG"}, id="unidade-maiuscula"),
         *[
             pytest.param(

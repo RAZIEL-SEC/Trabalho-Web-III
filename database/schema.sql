@@ -14,19 +14,43 @@ CREATE TABLE usuarios (
     criado_em   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE grupos_itens (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(80) NOT NULL UNIQUE,
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE subgrupos_itens (
+    id SERIAL PRIMARY KEY,
+    grupo_id INTEGER NOT NULL REFERENCES grupos_itens(id),
+    nome VARCHAR(80) NOT NULL,
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    criado_em TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CONSTRAINT uq_subgrupos_grupo_nome UNIQUE (grupo_id, nome)
+);
+
+INSERT INTO grupos_itens (nome) VALUES ('Sem classificação');
+INSERT INTO subgrupos_itens (grupo_id, nome)
+SELECT id, 'Sem classificação' FROM grupos_itens WHERE nome = 'Sem classificação';
+
 CREATE TABLE itens (
     id          SERIAL PRIMARY KEY,
     nome        VARCHAR(100) NOT NULL,
+    subgrupo_id INTEGER NOT NULL DEFAULT 1,
     unidade     VARCHAR(10) NOT NULL CHECK (unidade IN ('kg', 'g', 'un', 'l', 'ml', 'pacote', 'garrafa', 'frasco', 'lata', 'caixa', 'fardo', 'kit', 'par', 'rolo', 'duzia', 'bandeja', 'saco', 'galao')),
     saldo       NUMERIC(10,2) NOT NULL DEFAULT 0 CHECK (saldo >= 0),
     ativo       BOOLEAN NOT NULL DEFAULT TRUE,
     -- ID histórico do criador; intencionalmente sem FK para usuarios.
     criado_por  INTEGER NOT NULL,
-    criado_em   TIMESTAMPTZ NOT NULL DEFAULT now()
+    criado_em   TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CONSTRAINT fk_itens_subgrupo FOREIGN KEY (subgrupo_id) REFERENCES subgrupos_itens(id)
 );
 
 -- Só itens ativos precisam ter nome e unidade exclusivos.
 -- Itens inativos permanecem para preservar o histórico de movimentações.
+CREATE INDEX idx_itens_subgrupo_ativo ON itens (subgrupo_id) WHERE ativo IS TRUE;
+
 CREATE UNIQUE INDEX uq_itens_nome_unidade_ativos
     ON itens (nome, unidade)
     WHERE ativo IS TRUE;

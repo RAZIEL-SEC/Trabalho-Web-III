@@ -17,8 +17,8 @@ O projeto tem dois componentes, mantidos em branches diferentes:
 
 ## Funcionalidades do estoque
 
-- Cadastro e listagem paginada de itens, com unidades de medida variadas: peso, volume e embalagens/contagens (kg, g, un, l, ml, pacote, garrafa, frasco, lata, caixa, fardo, kit, par, rolo, dúzia, bandeja, saco e galão).
-- Entradas e saídas com atualização transacional do saldo, proteção contra saldo
+- Cadastro e listagem paginada de itens com grupo e subgrupo gerenciáveis pelo painel, além de unidades de medida variadas: peso, volume e embalagens/contagens (kg, g, un, l, ml, pacote, garrafa, frasco, lata, caixa, fardo, kit, par, rolo, dúzia, bandeja, saco e galão).
+- Gerenciamento de grupos e subgrupos, com criação, renomeação, desativação protegida por dependências e filtros de classificação no cadastro/listagem de itens. Itens existentes recebem a classificação padrão “Sem classificação” durante a migração.\n- Entradas e saídas com atualização transacional do saldo, proteção contra saldo
   negativo e chave de idempotência para evitar movimentações duplicadas por reenvio.
 - Consulta de saldos e histórico paginado de movimentações.
 - Autenticação por cookie de sessão, troca de senha e encerramento de sessões.
