@@ -37,7 +37,7 @@
             ><span class="material-symbols-outlined" aria-hidden="true"
               >inventory_2</span
             >Itens</a
-          ><a href="/estoque/movimentacoes"
+          ><a href="/estoque/categorias"><span class="material-symbols-outlined" aria-hidden="true">category</span>Grupos e subgrupos</a><a href="/estoque/movimentacoes"
             ><span class="material-symbols-outlined" aria-hidden="true"
               >swap_vert</span
             >Movimentações</a
@@ -101,6 +101,8 @@
                 maxlength="100"
                 placeholder="Ex.: Arroz"
             /></label>
+            <label>Grupo<select id="item-grupo" required><option value="">Selecione o grupo</option></select></label>
+            <label>Subgrupo<select name="subgrupo_id" id="item-subgrupo" required><option value="">Selecione o subgrupo</option></select></label>
             <label
               >Unidade<select name="unidade" required>
                 <option value="">Selecione</option>
@@ -159,7 +161,7 @@
               <thead>
                 <tr>
                   <th>Item</th>
-                  <th>Unidade</th>
+                  <th>Grupo</th><th>Subgrupo</th><th>Unidade</th>
                   <th>Saldo</th>
                   <th>Situação</th>
                   <th>Ações</th>
@@ -167,7 +169,7 @@
               </thead>
               <tbody id="itens-lista">
                 <tr>
-                  <td colspan="5" class="empty">Carregando…</td>
+                  <td colspan="7" class="empty">Carregando…</td>
                 </tr>
               </tbody>
             </table>
