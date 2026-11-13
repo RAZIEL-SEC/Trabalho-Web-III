@@ -131,7 +131,7 @@ def test_duplicidade_retorna_409_e_faz_rollback(
     )
 
     assert response.status_code == 409
-    assert response.json() == {"detail": "Já existe um item com esse nome e unidade."}
+    assert response.json() == {"detail": "Já existe um item ativo com esse nome e unidade."}
     # Sem db.rollback() na rota, a sessão fica inválida após o IntegrityError.
     assert db.is_active
     assert quantidade_itens(db) == 1
