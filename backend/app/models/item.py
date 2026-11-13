@@ -7,7 +7,7 @@ from sqlalchemy import (
     DateTime,
     Numeric,
     String,
-    UniqueConstraint,
+    Index,
     func,
     text,
 )
@@ -22,7 +22,13 @@ class Item(Base):
     __table_args__ = (
         CheckConstraint("unidade IN ('kg', 'g', 'un', 'l', 'ml', 'pacote', 'garrafa', 'frasco', 'lata', 'caixa', 'fardo', 'kit', 'par', 'rolo', 'duzia', 'bandeja', 'saco', 'galao')", name="ck_itens_unidade_valida"),
         CheckConstraint("saldo >= 0"),
-        UniqueConstraint("nome", "unidade"),
+        Index(
+            "uq_itens_nome_unidade_ativos",
+            "nome",
+            "unidade",
+            unique=True,
+            postgresql_where=text("ativo IS TRUE"),
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
