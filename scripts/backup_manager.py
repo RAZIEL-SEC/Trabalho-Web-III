@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import argparse, getpass, hashlib, hmac, http.client, io, json, os, re, shutil, subprocess, sys, tarfile, tempfile, time, urllib.error, urllib.request
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from pathlib import Path, PurePosixPath
 
@@ -19,6 +19,8 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 
 MAGIC=b"TBW3BK1\n"; SALT=16; NONCE=12; TAG=16; BLOCK=1024*1024
+
+BRT=timezone(timedelta(hours=-3))
 
 PART=40*1024*1024
 
@@ -306,32 +308,62 @@ def telegram_send(token: str, chat: str, file: Path, caption: str):
     finally:
         connection.close()
 
-def upload(path: Path,digest: str):
+def format_sha256(digest: str) -> str:
+    """Agrupa o SHA-256 em blocos de oito caracteres apenas para leitura."""
+    return " ".join(digest[i:i + 8] for i in range(0, len(digest), 8))
 
+
+def backup_caption(path: Path, digest: str, divided: bool, part: int = 1, total: int = 1) -> str:
+    """Monta o relatório enviado como legenda do documento no Telegram."""
+    now = datetime.now(BRT)
+    division = "Sim" if divided else "Não"
+    lines = [
+        "🗄️ BACKUP DO SISTEMA",
+        f"🕒 Data/hora: {now:%d/%m/%Y às %H:%M:%S} (BRT)",
+        "",
+        "📦 INFORMAÇÕES DO ARQUIVO",
+        f"Arquivo: {path.name}",
+        f"Dividido: {'✅' if divided else '❌'} {division}",
+        f"Partes: {total}",
+    ]
+    if divided:
+        lines.append(f"Parte enviada: {part}/{total}")
+    lines.extend([
+        "",
+        "🔐 VERIFICAÇÃO DE INTEGRIDADE — SHA-256",
+        format_sha256(digest),
+        "",
+        "🔒 Criptografia: AES-256-GCM",
+        "🗃️ Banco de dados: incluído",
+        "📁 Arquivos do sistema: incluídos",
+        "✅ BACKUP FINALIZADO COM SUCESSO",
+    ])
+    return "\n".join(lines)
+
+
+def upload(path: Path,digest: str):
     token=os.getenv("TELEGRAM_BOT_TOKEN",""); chat=os.getenv("TELEGRAM_CHAT_ID","")
 
     if not token or not chat: raise ValueError("Configure TELEGRAM_BOT_TOKEN e TELEGRAM_CHAT_ID.")
 
     if path.stat().st_size<=PART:
-
-        telegram_send(token,chat,path,f"Backup Trabalho-Web-III\nSHA-256: {digest}"); return
+        telegram_send(token,chat,path,backup_caption(path,digest,False))
+        return
 
     with tempfile.TemporaryDirectory(prefix="tbw3-parts-") as td:
-
         pieces=[]
-
         with path.open("rb") as src:
-
             i=1
-
             while chunk:=src.read(PART):
-
-                p=Path(td)/f"{path.name}.part{i:04d}"; p.write_bytes(chunk); pieces.append(p); i+=1
+                p=Path(td)/f"{path.name}.part{i:04d}"
+                p.write_bytes(chunk)
+                pieces.append(p)
+                i+=1
 
         for i,p in enumerate(pieces,1):
-
-            telegram_send(token,chat,p,f"Backup Trabalho-Web-III — parte {i}/{len(pieces)}\nArquivo: {path.name}\nSHA-256 completo: {digest}")
-
+            telegram_send(token,chat,p,backup_caption(
+                p,digest,True,part=i,total=len(pieces)
+            ))
 
 
 def create(root: Path):
@@ -350,7 +382,7 @@ def create(root: Path):
 
         stamp=datetime.now().astimezone().strftime("%Y%m%d_%H%M%S")
 
-        encrypted=d/f"trabalho-web-iii_{stamp}.tar.gz.enc"
+        encrypted=d/f"system-backup_{stamp}.tar.gz.enc"
 
         print("Exportando PostgreSQL e empacotando o projeto...")
 
