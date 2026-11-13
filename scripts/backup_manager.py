@@ -338,7 +338,7 @@ def backup_caption(path: Path, digest: str, divided: bool, part: int = 1, total:
         "📁 Arquivos do sistema: incluídos",
         "✅ BACKUP FINALIZADO COM SUCESSO",
     ])
-    return "\\n".join(lines)
+    return "\n".join(lines)
 
 
 def upload(path: Path,digest: str):
