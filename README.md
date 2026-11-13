@@ -17,7 +17,7 @@ O projeto tem dois componentes, mantidos em branches diferentes:
 
 ## Funcionalidades do estoque
 
-- Cadastro e listagem paginada de itens, com unidades `kg`, `un`, `l` e `pacote`.
+- Cadastro e listagem paginada de itens, com unidades de medida variadas: peso, volume e embalagens/contagens (kg, g, un, l, ml, pacote, garrafa, frasco, lata, caixa, fardo, kit, par, rolo, dúzia, bandeja, saco e galão).
 - Entradas e saídas com atualização transacional do saldo, proteção contra saldo
   negativo e chave de idempotência para evitar movimentações duplicadas por reenvio.
 - Consulta de saldos e histórico paginado de movimentações.
