@@ -20,7 +20,7 @@ class Item(Base):
     __tablename__ = "itens"
 
     __table_args__ = (
-        CheckConstraint("unidade IN ('kg', 'un', 'l', 'pacote')"),
+        CheckConstraint("unidade IN ('kg', 'g', 'un', 'l', 'ml', 'pacote', 'garrafa', 'frasco', 'lata', 'caixa', 'fardo', 'kit', 'par', 'rolo', 'duzia', 'bandeja', 'saco', 'galao')", name="ck_itens_unidade_valida"),
         CheckConstraint("saldo >= 0"),
         UniqueConstraint("nome", "unidade"),
     )
