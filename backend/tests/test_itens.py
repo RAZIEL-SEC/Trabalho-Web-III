@@ -96,10 +96,11 @@ def test_cadastro_persiste_dados_e_defaults(
     assert response.status_code == 201
     dados = response.json()
     assert set(dados) == {
-        "id", "nome", "unidade", "saldo", "ativo", "criado_por", "criado_em"
+        "id", "nome", "unidade", "subgrupo_id", "saldo", "ativo", "criado_por", "criado_em"
     }
     assert dados["nome"] == "Arroz"
     assert dados["unidade"] == unidade
+    assert dados["subgrupo_id"] > 0
     assert dados["saldo"] == "0.00"
     assert dados["ativo"] is True
     assert dados["criado_por"] == usuario.id
