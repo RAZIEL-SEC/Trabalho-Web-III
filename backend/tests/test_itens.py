@@ -330,6 +330,50 @@ def test_excluir_item_desativa_sem_apagar_historico(
     assert client_autenticado.delete(f"/itens/{item_id}").status_code == 404
 
 
+def test_recriar_item_apos_exclusao_logica_preserva_historico(
+    client_autenticado: TestClient, db: Session, usuario: Usuario
+):
+    from app.models.movimentacao import Movimentacao
+
+    original = Item(nome="Cesta básica", unidade="un", criado_por=usuario.id)
+    db.add(original)
+    db.commit()
+    db.refresh(original)
+    movimentacao = Movimentacao(
+        item_id=original.id,
+        tipo="entrada",
+        quantidade=Decimal("10.00"),
+        usuario_id=usuario.id,
+    )
+    db.add(movimentacao)
+    db.commit()
+    id_antigo = original.id
+    id_movimentacao = movimentacao.id
+
+    exclusao = client_autenticado.delete(f"/itens/{id_antigo}")
+    assert exclusao.status_code == 200
+    assert exclusao.json()["ativo"] is False
+
+    recriacao = client_autenticado.post(
+        "/itens", json={"nome": "Cesta básica", "unidade": "un"}
+    )
+
+    assert recriacao.status_code == 201
+    assert recriacao.json()["id"] != id_antigo
+    assert recriacao.json()["nome"] == "Cesta básica"
+    assert recriacao.json()["unidade"] == "un"
+    assert recriacao.json()["saldo"] == "0.00"
+    assert recriacao.json()["ativo"] is True
+
+    db.expire_all()
+    antigo = db.get(Item, id_antigo)
+    novo = db.get(Item, recriacao.json()["id"])
+    assert antigo is not None and antigo.ativo is False
+    assert novo is not None and novo.ativo is True
+    assert db.get(Movimentacao, id_movimentacao) is not None
+    assert [item["id"] for item in client_autenticado.get("/itens").json()] == [novo.id]
+
+
 def test_excluir_item_exige_autenticacao(client: TestClient, db: Session, usuario: Usuario):
     item = Item(nome="Arroz", unidade="kg", criado_por=usuario.id)
     db.add(item)
