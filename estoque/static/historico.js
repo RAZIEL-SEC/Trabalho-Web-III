@@ -13,7 +13,7 @@ async function carregar() {
   try {
     const resposta = await fetch("/movimentacoes?limite=200");
     if (resposta.status === 401) {
-      location.href = "login.html";
+      location.href = "/estoque/login";
       return;
     }
     if (!resposta.ok) throw new Error("Não foi possível consultar o histórico.");
@@ -66,7 +66,7 @@ async function limparHistorico() {
   try {
     const resposta = await apiFetch("/movimentacoes/historico", { method: "DELETE" });
     if (resposta.status === 401) {
-      location.href = "login.html";
+      location.href = "/estoque/login";
       return;
     }
     if (resposta.status === 403) {

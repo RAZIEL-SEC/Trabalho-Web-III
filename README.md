@@ -13,7 +13,7 @@ O projeto tem dois componentes, mantidos em branches diferentes:
 ## Acessos
 
 - [Site institucional](https://trabalho-web-iii.razielsec01.workers.dev/)
-- [Painel de estoque](https://amigosdozealguem.duckdns.org/estoque/login.html)
+- [Painel de estoque](https://amigosdozealguem.duckdns.org/estoque/login)
 
 ## Funcionalidades do estoque
 
@@ -147,7 +147,7 @@ cd backend
 python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-- Painel local: <http://127.0.0.1:8000/estoque/login.html>
+- Painel local: <http://127.0.0.1:8000/estoque/login>
 - Documentação interativa da API: <http://127.0.0.1:8000/docs>
 - Saúde da API e conexão com o banco: <http://127.0.0.1:8000/saude>
 

@@ -43,7 +43,7 @@ async function excluir(id, nome, botao) {
   try {
     const r = await apiFetch(`/usuarios/${id}`, { method: "DELETE" });
     if (r.status === 401) {
-      window.location.href = "login.html";
+      window.location.href = "/estoque/login";
       return;
     }
     if (!r.ok) {
@@ -62,8 +62,8 @@ async function excluir(id, nome, botao) {
 
 async function carregar() {
   const r = await fetch("/usuarios");
-  if (r.status === 401) return (window.location.href = "login.html");
-  if (r.status === 403) return (window.location.href = "itens.html");
+  if (r.status === 401) return (window.location.href = "/estoque/login");
+  if (r.status === 403) return (window.location.href = "/estoque/itens");
   const usuarios = await r.json();
 
   corpo.replaceChildren();
@@ -134,7 +134,7 @@ form.addEventListener("submit", async (e) => {
 sessao.then((u) => {
   if (!u) return;
   if (u.perfil !== "admin") {
-    window.location.href = "itens.html";
+    window.location.href = "/estoque/itens";
     return;
   }
   usuarioAtual = u;

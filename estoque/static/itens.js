@@ -5,7 +5,7 @@ async function carregar(){
   corpo.innerHTML='<tr><td colspan="5" class="empty">Carregando…</td></tr>';
   try{
     const r=await fetch("/itens?limite=200");
-    if(r.status===401){location.href="login.html";return}
+    if(r.status===401){location.href="/estoque/login";return}
     if(!r.ok)throw Error("Falha ao consultar itens.");
     const itens=await r.json();corpo.replaceChildren();
     if(!itens.length){const tr=document.createElement("tr"),td=cell("Nenhum item ativo cadastrado.");td.colSpan=5;td.className="empty";tr.append(td);corpo.append(tr);return}
@@ -25,7 +25,7 @@ async function excluir(item,botao){
   try{
     const r=await apiFetch(`/itens/${item.id}`,{method:"DELETE"});
     const d=await r.json().catch(()=>({}));
-    if(r.status===401){location.href="login.html";return}
+    if(r.status===401){location.href="/estoque/login";return}
     if(!r.ok)throw Error(typeof d.detail==="string"?d.detail:"Não foi possível excluir o item.");
     feedback(`Item "${item.nome}" excluído. O histórico foi preservado.`);
     await carregar();
@@ -36,7 +36,7 @@ form.addEventListener("submit",async e=>{
   try{
     const r=await apiFetch("/itens",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.fromEntries(new FormData(form)))});
     const d=await r.json().catch(()=>({}));
-    if(r.status===401){location.href="login.html";return}
+    if(r.status===401){location.href="/estoque/login";return}
     if(!r.ok)throw Error(typeof d.detail==="string"?d.detail:"Confira os dados informados.");
     form.reset();feedback("Item cadastrado com sucesso.");await carregar();
   }catch(e){feedback(e.message,"error")}finally{b.disabled=false}

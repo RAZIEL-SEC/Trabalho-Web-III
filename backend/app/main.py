@@ -3,6 +3,7 @@ from pathlib import Path
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -40,14 +41,31 @@ def inicio():
 
 @app.get("/login", include_in_schema=False)
 def tela_login():
-    return RedirectResponse("/estoque/login.html", status_code=307)
+    return RedirectResponse("/estoque/login", status_code=307)
 
 
 @app.get("/usuario", include_in_schema=False)
 def tela_usuarios():
-    return RedirectResponse("/estoque/usuarios.html", status_code=307)
+    return RedirectResponse("/estoque/usuarios", status_code=307)
 
 
 # API e painel são servidos na mesma origem.
 PASTA_ESTOQUE = Path(__file__).resolve().parents[2] / "estoque"
-app.mount("/estoque", StaticFiles(directory=PASTA_ESTOQUE, html=True), name="estoque")
+class PainelStaticFiles(StaticFiles):
+    async def get_response(self, path: str, scope):
+        if path.endswith(".html"):
+            destino = "/estoque/" if path == "index.html" else f"/estoque/{path[:-5]}"
+            query = scope.get("query_string", b"").decode("latin-1")
+            if query:
+                destino = f"{destino}?{query}"
+            return RedirectResponse(destino, status_code=308)
+
+        try:
+            return await super().get_response(path, scope)
+        except StarletteHTTPException as erro:
+            if erro.status_code != 404:
+                raise
+            return await super().get_response(f"{path}.html", scope)
+
+
+app.mount("/estoque", PainelStaticFiles(directory=PASTA_ESTOQUE, html=True), name="estoque")
