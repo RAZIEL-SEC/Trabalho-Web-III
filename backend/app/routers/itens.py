@@ -20,6 +20,10 @@ class ItemIn(BaseModel):
     unidade: Literal["kg", "g", "un", "l", "ml", "pacote", "garrafa", "frasco", "lata", "caixa", "fardo", "kit", "par", "rolo", "duzia", "bandeja", "saco", "galao"]
     subgrupo_id: int | None = Field(default=None, gt=0)
 
+class ItemClassificacaoIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    subgrupo_id: int = Field(gt=0)
+
 class ItemOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
@@ -65,6 +69,20 @@ def excluir_item(item_id: int, db: Session = Depends(get_db), _usuario: Usuario 
     if item is None or not item.ativo:
         raise HTTPException(404, "Item não encontrado.")
     item.ativo = False
+    db.commit()
+    db.refresh(item)
+    return item
+
+@router.patch("/{item_id}/classificacao", response_model=ItemOut)
+def reclassificar_item(item_id: int, dados: ItemClassificacaoIn, db: Session = Depends(get_db), _usuario: Usuario = Depends(get_usuario_atual)):
+    item = db.scalar(select(Item).where(Item.id == item_id).with_for_update())
+    if item is None or not item.ativo:
+        raise HTTPException(404, "Item não encontrado.")
+    subgrupo = db.get(SubgrupoItem, dados.subgrupo_id)
+    grupo = db.get(GrupoItem, subgrupo.grupo_id) if subgrupo else None
+    if not subgrupo or not subgrupo.ativo or not grupo or not grupo.ativo:
+        raise HTTPException(422, "Selecione um subgrupo ativo.")
+    item.subgrupo_id = subgrupo.id
     db.commit()
     db.refresh(item)
     return item
